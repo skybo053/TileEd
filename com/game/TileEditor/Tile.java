@@ -2,49 +2,107 @@ package com.game.TileEditor;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
-public class Tile
+public class Tile extends StackPane
 {
-  private Image     oImage     = null;
+  private static final String STYLE_CLASS = "grid-cell";
+  
   private ImageView oImageView = null;
-  
   private Boolean   oIsSolid   = null;
+  private Integer   oWidth     = null;
+  private Integer   oHeight    = null;
+  private TileImage oTileImage = null;
   
-  private Integer oWidth  = null;
-  private Integer oHeight = null;
   
-  
-  public Tile(int pWidth, int pHeight)
+  public Tile(
+      int       pWidth, 
+      int       pHeight, 
+      Boolean   pIsSolid, 
+      String    pImagePath,
+      TileImage pTileImage)
   {
-    oWidth  = pWidth;
-    oHeight = pHeight;
+    oWidth     = pWidth;
+    oHeight    = pHeight;
+    oIsSolid   = pIsSolid;
+    oTileImage = pTileImage;
+    
+    oImageView = new ImageView();
+    
+    setTileImage(pImagePath);
+    setTileStyle(STYLE_CLASS);
   }
+
   
-  
-  public void setImageView(String pPath)
+  public void setTileImage(String pImagePath)
   {
     Image vImage = null;
     
     vImage = new Image(
-        pPath,
+        pImagePath,
         oWidth,
         oHeight,
         true,
         true);
     
-    if(oImageView == null)
-    {
-      oImageView = new ImageView(vImage);
-    }
-    else
-    {
-      oImageView.setImage(vImage);
-    }
+    oImageView.setImage(vImage);
+    
+    getChildren().add(oImageView);
   }
   
   
-  public ImageView getImageView()
+  public ImageView getTileImage()
   {
     return oImageView;
   }
+  
+  
+  public void setIsSolid(Boolean pIsSolid)
+  {
+    oIsSolid = pIsSolid;
+  }
+  
+  
+  public Boolean isSolid()
+  {
+    return oIsSolid;
+  }
+  
+  
+  public void setTileWidth(Integer pWidth)
+  {
+    oWidth = pWidth;
+  }
+  
+  
+  public Integer getTileWidth()
+  {
+    return oWidth;
+  }
+  
+  
+  public void setTileHeight(Integer pHeight)
+  {
+    oHeight = pHeight;
+  }
+  
+  
+  public Integer getTileHeight()
+  {
+    return oHeight;
+  }
+  
+  
+  public String getDescription()
+  {
+    return oTileImage.getDescription();
+  }
+  
+  
+  public void setTileStyle(String pStyle)
+  {
+    getStyleClass().clear();
+    getStyleClass().add(pStyle);
+  }
+  
 }

@@ -1,7 +1,5 @@
 package com.game.TileEditor;
 
-
-
 import java.util.ArrayList;
 
 import com.game.EventHandlers.Quit_Handler;
@@ -9,29 +7,31 @@ import com.game.EventHandlers.Quit_Handler;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
 
 public class TileEditor extends Application
 {
-  Scene      oScene          = null;
-  MenuBar    oMenuBar        = null;
-  Menu       oFileMenu       = null;
-  BorderPane oBorderPane     = null;
-  TilePane   oTilePane       = null;
-  GridPane   oGridPane       = null;
-  GridPane   oSideGridPane   = null;
+  private static final String TITLE              = "TEd 1.0.0";
+  private static final String SELECTED_GRID_CELL = "selected-grid-cell";
+  private static final String GRID_CELL          = "grid-cell";
+  private static final double SCENE_WIDTH        = 800.0;
+  private static final double SCENE_HEIGHT       = 600.0;
   
-  private static final String Title = "TEd 1.0.0";
+  private Scene      oScene          = null;
+  private MenuBar    oMenuBar        = null;
+  private Menu       oFileMenu       = null;
+  private BorderPane oBorderPane     = null;
+  private GridPane   oGridPane       = null;
+  private GridPane   oSideGridPane   = null;
+  
+  private Tile oPreviousSelectedTile = null;
   
   
   public static void main(String[] pArgs) 
@@ -44,9 +44,9 @@ public class TileEditor extends Application
   {
     initialize();
     
-    pStage.setTitle(Title);
-    pStage.setWidth(600.0);
-    pStage.setHeight(500.0);
+    pStage.setTitle(TITLE);
+    pStage.setWidth(SCENE_WIDTH);
+    pStage.setHeight(SCENE_HEIGHT);
     pStage.setScene(oScene);
     pStage.show();
   }
@@ -57,20 +57,16 @@ public class TileEditor extends Application
     oBorderPane   = new BorderPane();
     oMenuBar      = new MenuBar();
     oFileMenu     = new Menu("File");
-    oTilePane     = new TilePane();
     oGridPane     = new GridPane();
     oSideGridPane = new GridPane();
    
     
     createMenuItems();
     createGridPane();
+    createSideGridPane();
     
     oBorderPane.setTop(oMenuBar);
     oBorderPane.setCenter(oGridPane);
-    
-    oSideGridPane.setPrefWidth(100);
-    oSideGridPane.setStyle("-fx-background-color: pink;");
-    
     oBorderPane.setRight(oSideGridPane);
     
     oScene = new Scene(oBorderPane);
@@ -99,55 +95,90 @@ public class TileEditor extends Application
   
   private void createGridPane()
   {
-    Tile      vTile      = null;
-    StackPane vStackPane = null;
+    Tile            vTile   = null;
+    ArrayList<Node> vImages = null;
     
     try
     {
-      ArrayList<Node> vImages = new ArrayList<Node>();
-    
-      vTile      = new Tile(35, 35);
-      vStackPane = new StackPane();
+      vImages = new ArrayList<Node>();
       
-      vTile.setImageView("file:Resources/Images/grass.png");
+      vTile = new Tile(
+          35,
+          35,
+          false,
+          "file:Resources/Images/grass.png",
+          TileImage.GRASS);
       
-      vStackPane.getStyleClass().add("grid-cell");
-      vStackPane.getChildren().add(vTile.getImageView());
+      setTileOnMouseClick(vTile);
       
-      vImages.add(vStackPane);
+      vImages.add(vTile);
+       
+      vTile = new Tile(
+          35,
+          35,
+          true,
+          "file:Resources/Images/water.png",
+          TileImage.WATER);
       
-      vTile      = new Tile(35, 35);
-      vStackPane = new StackPane();
+      setTileOnMouseClick(vTile);
       
-      vTile.setImageView("file:Resources/Images/water.png");
-      vStackPane.getStyleClass().add("grid-cell");
-      vStackPane.getChildren().add(vTile.getImageView());
+      vImages.add(vTile);
+       
+      vTile = new Tile(
+          35,
+          35,
+          false,
+          "file:Resources/Images/dirt.png",
+          TileImage.DIRT);
       
-      vImages.add(vStackPane);
+      setTileOnMouseClick(vTile);
       
-      
-      
-      vTile      = new Tile(35, 35);
-      vStackPane = new StackPane();
-      
-      vTile.setImageView("file:Resources/Images/dirt.png");
-      vStackPane.getStyleClass().add("grid-cell");
-      vStackPane.getChildren().add(vTile.getImageView());
-      
-      vImages.add(vStackPane);
-    
-    
-    Node[] vNodeArray  = vImages.toArray(new Node[vImages.size()]);
-    
-    oGridPane.addRow(0, vNodeArray);
-    
-    System.out.println("dirt tile at position: " + GridPane.getRowIndex(vStackPane)
-    + ", " + GridPane.getColumnIndex(vStackPane));
+      vImages.add(vTile);
+       
+      oGridPane.addRow(0, vImages.toArray(new Node[vImages.size()]));
     }
     catch(Exception e)
     {
      System.out.println(e.getMessage());
     }
+  }
+  
+  
+  private void createSideGridPane()
+  {
+    Label vLabel = null;
+    
+    oSideGridPane.setPrefWidth(200);
+    oSideGridPane.setStyle("-fx-background-color: pink;");
+
+    vLabel = new Label("Description");
+    oSideGridPane.add(vLabel, 0, 0);
+  }
+  
+  
+  private void setTileOnMouseClick(Tile pTile)
+  {
+    pTile.setOnMouseClicked(pEvent -> {
+      
+      Tile  vTile  = null;
+      Label vLabel = null;
+      
+      vTile = (Tile)pEvent.getSource();
+      
+      if(oPreviousSelectedTile != null)
+      {
+        oPreviousSelectedTile.setTileStyle(GRID_CELL);
+      }
+      
+      oPreviousSelectedTile = vTile;
+      
+      vTile.setTileStyle(SELECTED_GRID_CELL);
+      
+      vLabel = (Label) oSideGridPane.getChildren().get(0);
+      vLabel.setText(vTile.getDescription());
+      
+      
+    });
   }
 }
   
