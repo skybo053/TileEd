@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 
 public class NewProjectHandler implements EventHandler<ActionEvent>
 {
+  private static final double WIDTH  = 220.0;
+  private static final double HEIGHT = 150.0;
+  
   private TextField  oRowTextField    = null;
   private TextField  oColumnTextField = null;
   
@@ -31,8 +34,6 @@ public class NewProjectHandler implements EventHandler<ActionEvent>
   {
     oTileEditor      = pTileEditor;
     
-    oStage           = new Stage();
-    
     oRowTextField    = new TextField();
     oColumnTextField = new TextField();
     oRowLabel        = new Label("Rows ");
@@ -42,14 +43,15 @@ public class NewProjectHandler implements EventHandler<ActionEvent>
   
   public void handle(ActionEvent pActionEvent) 
   {
-    oStage.setTitle("Enter Starting Grid Size");
-    oStage.setWidth(220.0);
-    oStage.setHeight(150.0);
-    oStage.setScene(createSelectMapDimensionScene());
-    oStage.setResizable(false);
-    
-    if(oStage.getModality() == Modality.NONE)
+    if(oStage == null)
     {
+      oStage  = new Stage();
+      
+      oStage.setTitle("Map Grid");
+      oStage.setWidth(WIDTH);
+      oStage.setHeight(HEIGHT);
+      oStage.setScene(createSelectMapDimensionScene());
+      oStage.setResizable(false);
       oStage.initModality(Modality.APPLICATION_MODAL);
     }
     
