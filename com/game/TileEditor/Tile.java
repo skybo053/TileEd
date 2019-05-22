@@ -15,6 +15,18 @@ public class Tile extends StackPane
   private TileImage oTileImage = null;
   
   
+  public Tile(int pWidth, int pHeight)
+  {
+    oWidth  = pWidth;
+    oHeight = pHeight;
+    
+    setPrefWidth(oWidth);
+    setPrefHeight(oHeight);
+    
+    setTileStyle(STYLE_CLASS);
+  }
+  
+  
   public Tile(
       int       pWidth, 
       int       pHeight, 
@@ -22,15 +34,14 @@ public class Tile extends StackPane
       String    pImagePath,
       TileImage pTileImage)
   {
-    oWidth     = pWidth;
-    oHeight    = pHeight;
+    this(pWidth, pHeight);
+    
     oIsSolid   = pIsSolid;
     oTileImage = pTileImage;
     
     oImageView = new ImageView();
     
     setTileImage(pImagePath);
-    setTileStyle(STYLE_CLASS);
   }
 
   
