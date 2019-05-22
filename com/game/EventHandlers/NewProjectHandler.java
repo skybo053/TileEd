@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 public class NewProjectHandler implements EventHandler<ActionEvent>
@@ -53,6 +54,7 @@ public class NewProjectHandler implements EventHandler<ActionEvent>
       oStage.setScene(createSelectMapDimensionScene());
       oStage.setResizable(false);
       oStage.initModality(Modality.APPLICATION_MODAL);
+      oStage.setOnCloseRequest(new EnterMapDimensionClose());
     }
     
     oStage.show();
@@ -89,6 +91,13 @@ public class NewProjectHandler implements EventHandler<ActionEvent>
   }
   
   
+  private void clearTextFields()
+  {
+    oRowTextField.clear();
+    oColumnTextField.clear();
+  }
+  
+  
   private class EnterMapDimensionsButton implements EventHandler<ActionEvent>
   {
     public void handle(ActionEvent pActionEvent)
@@ -100,22 +109,26 @@ public class NewProjectHandler implements EventHandler<ActionEvent>
       {
         vRows    = Integer.parseInt(oRowTextField.getText().trim());
         vColumns = Integer.parseInt(oColumnTextField.getText().trim());
-      }
-      catch(NumberFormatException pNumberFormatException)
-      {
-        vRows    = 0;
-        vColumns = 0;
-      }
-      finally
-      {
+        
         oTileEditor.clearMapGrid();
         oTileEditor.createMapGrid(vRows, vColumns);
         
-        oRowTextField.clear();
-        oColumnTextField.clear();
-        
+        clearTextFields();
         oStage.close();
       }
+      catch(NumberFormatException pNumberFormatException)
+      {
+        
+      }
+    }
+  }
+  
+  
+  private class EnterMapDimensionClose implements EventHandler<WindowEvent>
+  {
+    public void handle(WindowEvent pWindowEvent)
+    {
+      clearTextFields();
     }
   }
   
