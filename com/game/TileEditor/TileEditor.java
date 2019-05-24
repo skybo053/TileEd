@@ -22,8 +22,10 @@ import javafx.stage.Stage;
 public class TileEditor extends Application
 {
   private static final String TITLE              = "TEd 1.0.0";
+  private static final String STYLE_SHEET        = "file:Resources/CSS/stylesheet.css";
   private static final String SELECTED_GRID_CELL = "selected-grid-cell";
   private static final String GRID_CELL          = "grid-cell";
+  private static final String SIDE_PANE          = "side-border-pane";
   private static final double SCENE_WIDTH        = 1000.0;
   private static final double SCENE_HEIGHT       = 800.0;
   private static final int    TILE_LENGTH        = 45;
@@ -31,12 +33,15 @@ public class TileEditor extends Application
   private Scene      oScene          = null;
   private MenuBar    oMenuBar        = null;
   private Menu       oFileMenu       = null;
-  private BorderPane oBorderPane     = null;
-  private GridPane   oGridPane       = null;
-  private GridPane   oSideGridPane   = null;
-  private ScrollPane oScrollPane     = null;
+  private BorderPane oMainBorderPane = null;
+  private BorderPane oSideBorderPane = null;
+  private ScrollPane oMainScrollPane = null;
+  private GridPane   oMainGridPane   = null;
+  private TileMenu   oSideTileMenu   = null;
+ 
   
-  private Tile oPreviousSelectedTile = null;
+  private Tile oCurrentTile  = null;
+  private Tile oPreviousTile = null;
   
   
   public static void main(String[] pArgs) 
@@ -48,6 +53,8 @@ public class TileEditor extends Application
   public void start(Stage pStage) throws Exception 
   {
     initialize();
+    buildScene();
+    applyStyles();
     
     pStage.setTitle(TITLE);
     pStage.setWidth(SCENE_WIDTH);
@@ -59,29 +66,45 @@ public class TileEditor extends Application
 
   private void initialize()
   {
-    oBorderPane   = new BorderPane();
-    oMenuBar      = new MenuBar();
-    oFileMenu     = new Menu("File");
-    oGridPane     = new GridPane();
-    oSideGridPane = new GridPane();
-    oScrollPane   = new ScrollPane(oGridPane);
-    oScene        = new Scene(oBorderPane);
+    oMainBorderPane = new BorderPane();
+    oSideBorderPane = new BorderPane();
+    oMenuBar        = new MenuBar();
+    oFileMenu       = new Menu("File");
+    oMainGridPane   = new GridPane();
+    oMainScrollPane = new ScrollPane();
+    oSideTileMenu   = new TileMenu();
     
-    oScrollPane.getStyleClass().clear();
+    buildMenu();
+    configureMainGridPane();
+    configureSideBorderPane();
+  }
+  
+  
+  private void buildScene()
+  {
+    oScene = new Scene(oMainBorderPane);
+
+    oSideBorderPane.setCenter(oSideTileMenu);
     
-    createMenuItems();
-    createGridPane();
-    createSideGridPane();
+    oMainScrollPane.setContent(oMainGridPane);
     
-    oBorderPane.setTop(oMenuBar);
-    oBorderPane.setCenter(oScrollPane);
-    oBorderPane.setRight(oSideGridPane);
+    oMainBorderPane.setTop(oMenuBar);
+    oMainBorderPane.setCenter(oMainScrollPane);
+    oMainBorderPane.setRight(oSideBorderPane);
+  }
+  
+  
+  private void applyStyles()
+  {
+    oMainScrollPane.getStyleClass().clear();
     
-    oGridPane.getStylesheets().add("file:Resources/CSS/stylesheet.css");
+    oSideBorderPane.getStyleClass().add(SIDE_PANE);
+    
+    oScene.getStylesheets().add(STYLE_SHEET);
   }
 
 
-  private void createMenuItems()
+  private void buildMenu()
   {
     MenuItem                 vMenuItem  = null;
     ObservableList<MenuItem> vMenuItems = null;
@@ -108,7 +131,7 @@ public class TileEditor extends Application
   
   public void clearMapGrid()
   {
-    oGridPane.getChildren().clear();
+    oMainGridPane.getChildren().clear();
   }
   
   
@@ -130,18 +153,32 @@ public class TileEditor extends Application
         vTiles.add(vTile);
       }
       
-      oGridPane.addRow(vCurrentRow, vTiles.toArray(new Node[vTiles.size()]));
+      oMainGridPane.addRow(vCurrentRow, vTiles.toArray(new Node[vTiles.size()]));
     }
   }
   
   
-  private void createGridPane()
+  public void showTileMenu()
+  {
+    oSideTileMenu.setVisible(true);
+  }
+  
+  
+  public void hideTileMenu()
+  {
+    oSideTileMenu.setVisible(false);
+  }
+  
+  
+  private void configureMainGridPane()
   {
     Tile            vTile   = null;
     ArrayList<Node> vImages = null;
     
     try
     {
+    
+      
       vImages = new ArrayList<Node>();
       
       /*vTile = new Tile(
@@ -162,7 +199,7 @@ public class TileEditor extends Application
           35,
           true,
           "file:Resources/Images/water.png",
-          TileImage.WATER);
+          TileImageType.WATER);
       
       setTileOnMouseClick(vTile);
       
@@ -173,13 +210,13 @@ public class TileEditor extends Application
           35,
           false,
           "file:Resources/Images/dirt.png",
-          TileImage.DIRT);
+          TileImageType.DIRT);
       
       setTileOnMouseClick(vTile);
       
       vImages.add(vTile);
        
-      oGridPane.addRow(0, vImages.toArray(new Node[vImages.size()]));
+      oMainGridPane.addRow(0, vImages.toArray(new Node[vImages.size()]));
     }
     catch(Exception e)
     {
@@ -188,15 +225,10 @@ public class TileEditor extends Application
   }
   
   
-  private void createSideGridPane()
+  private void configureSideBorderPane()
   {
-    Label vLabel = null;
+    oSideBorderPane.setPrefWidth(200);
     
-    oSideGridPane.setPrefWidth(200);
-    oSideGridPane.setStyle("-fx-background-color: pink;");
-
-    vLabel = new Label("Description");
-    oSideGridPane.add(vLabel, 0, 0);
   }
   
   
@@ -204,31 +236,37 @@ public class TileEditor extends Application
   {
     pTile.setOnMouseClicked(pEvent -> {
       
-      Tile  vTile  = null;
-      Label vLabel = null;
+      oCurrentTile = (Tile)pEvent.getSource();
       
-      vTile = (Tile)pEvent.getSource();
-      
-      if(oPreviousSelectedTile != null)
+      if(oPreviousTile != null)
       {
-        oPreviousSelectedTile.setTileStyle(GRID_CELL);
+        oPreviousTile.setTileStyle(GRID_CELL);
       }
       
-      oPreviousSelectedTile = vTile;
+      oPreviousTile = oCurrentTile;
       
-      vTile.setTileStyle(SELECTED_GRID_CELL);
+      oCurrentTile.setTileStyle(SELECTED_GRID_CELL);
       
-      vLabel = (Label)oSideGridPane.getChildren().get(0);
+      displayCurrentTileConfig();
     });
   }
   
   
-  public void setSideGridPaneLabel(String pText)
+  public void displayCurrentTileConfig()
   {
-    Label vLabel = (Label)oSideGridPane.getChildren().get(0);
+    Integer vRowIndex = null;
+    Integer vColIndex = null;
     
-    vLabel.setText(pText);
+    vRowIndex = GridPane.getRowIndex(oCurrentTile)    + 1;
+    vColIndex = GridPane.getColumnIndex(oCurrentTile) + 1;
+    
+    oSideTileMenu.setRow(vRowIndex.toString());
+    oSideTileMenu.setColumn(vColIndex.toString());
+    oSideTileMenu.setImage(oCurrentTile.getTileImageName());
+    oSideTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
+    oSideTileMenu.setEvents(oCurrentTile.getTileEvents());
   }
+  
 }
   
   

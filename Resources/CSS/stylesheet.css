@@ -11,3 +11,7 @@
 	-fx-border-color: yellow;
 	-fx-background-color: white;
 }
+
+.side-border-pane{
+	-fx-background-color: lightgrey;
+}

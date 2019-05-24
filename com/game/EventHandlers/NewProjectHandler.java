@@ -17,8 +17,8 @@ import javafx.stage.WindowEvent;
 
 public class NewProjectHandler implements EventHandler<ActionEvent>
 {
-  private static final double WIDTH  = 220.0;
-  private static final double HEIGHT = 150.0;
+  private static final double WIDTH   = 220.0;
+  private static final double HEIGHT  = 150.0;
   
   private TextField  oRowTextField    = null;
   private TextField  oColumnTextField = null;

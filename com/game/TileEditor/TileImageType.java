@@ -1,15 +1,16 @@
 package com.game.TileEditor;
 
-public enum TileImage 
+public enum TileImageType 
 {
   GRASS("Grass tile"),
   DIRT("Dirt tile"),
-  WATER("Water tile");
+  WATER("Water tile"),
+  NOT_SET("No image");
   
   private String oDescription = null;
   
   
-  private TileImage(String pDescription)
+  private TileImageType(String pDescription)
   {
     oDescription = pDescription;
   }

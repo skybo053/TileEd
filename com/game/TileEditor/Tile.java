@@ -8,17 +8,19 @@ public class Tile extends StackPane
 {
   private static final String STYLE_CLASS = "grid-cell";
   
-  private ImageView oImageView = null;
-  private Boolean   oIsSolid   = null;
-  private Integer   oWidth     = null;
-  private Integer   oHeight    = null;
-  private TileImage oTileImage = null;
+  private ImageView     oImageView     = null;
+  private Boolean       oIsSolid       = null;
+  private Integer       oWidth         = null;
+  private Integer       oHeight        = null;
+  private TileImageType oTileImageType = null;
   
   
   public Tile(int pWidth, int pHeight)
   {
-    oWidth  = pWidth;
-    oHeight = pHeight;
+    oWidth         = pWidth;
+    oHeight        = pHeight;
+    oTileImageType = TileImageType.NOT_SET;
+    oIsSolid       = false;
     
     setPrefWidth(oWidth);
     setPrefHeight(oHeight);
@@ -28,18 +30,17 @@ public class Tile extends StackPane
   
   
   public Tile(
-      int       pWidth, 
-      int       pHeight, 
-      Boolean   pIsSolid, 
-      String    pImagePath,
-      TileImage pTileImage)
+      int           pWidth, 
+      int           pHeight, 
+      Boolean       pIsSolid, 
+      String        pImagePath,
+      TileImageType pTileImageType)
   {
     this(pWidth, pHeight);
     
-    oIsSolid   = pIsSolid;
-    oTileImage = pTileImage;
-    
-    oImageView = new ImageView();
+    oImageView     = new ImageView();
+    oIsSolid       = pIsSolid;
+    oTileImageType = pTileImageType;
     
     setTileImage(pImagePath);
   }
@@ -104,9 +105,15 @@ public class Tile extends StackPane
   }
   
   
-  public String getDescription()
+  public String getTileImageName()
   {
-    return oTileImage.getDescription();
+    return oTileImageType.getDescription();
+  }
+  
+  
+  public String getTileEvents()
+  {
+    return "None";
   }
   
   
