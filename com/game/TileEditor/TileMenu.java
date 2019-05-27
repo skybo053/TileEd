@@ -7,7 +7,6 @@ import javafx.scene.layout.GridPane;
 
 public class TileMenu extends GridPane
 {
-  private Label oTileMenuLabel  = null;
   private Label oRowPosLabel    = null;
   private Label oColumnPosLabel = null;
   private Label oRow            = null;
@@ -22,7 +21,6 @@ public class TileMenu extends GridPane
   
   public TileMenu()
   {
-    oTileMenuLabel  = new Label("Tile Attributes");
     oRowPosLabel    = new Label("Row: ");
     oColumnPosLabel = new Label("Column: ");
     oImageLabel     = new Label("Image: ");
@@ -35,12 +33,11 @@ public class TileMenu extends GridPane
     oIsSolid = new Label();
     oEvents  = new Label();
     
-    GridPane.setMargin(oTileMenuLabel,  new Insets(0,0,10,5));
-    GridPane.setMargin(oRowPosLabel,    new Insets(0,0,0,5));
-    GridPane.setMargin(oColumnPosLabel, new Insets(0,0,0,5));
-    GridPane.setMargin(oImageLabel,     new Insets(0,0,0,5));
-    GridPane.setMargin(oIsSolidLabel,   new Insets(0,0,0,5));
-    GridPane.setMargin(oEventsLabel,    new Insets(0,0,0,5));
+    GridPane.setMargin(oRowPosLabel,    new Insets(0,15,0,5));
+    GridPane.setMargin(oColumnPosLabel, new Insets(0,15,0,5));
+    GridPane.setMargin(oImageLabel,     new Insets(0,15,0,5));
+    GridPane.setMargin(oIsSolidLabel,   new Insets(0,15,0,5));
+    GridPane.setMargin(oEventsLabel,    new Insets(0,15,0,5));
     
     configureStyles();
     placeLabels();
@@ -49,28 +46,27 @@ public class TileMenu extends GridPane
   
   private void configureStyles()
   {
-    oTileMenuLabel.setStyle("-fx-font-size: 10pt;");
+    
   }
   
   
   private void placeLabels()
-  {
-    add(oTileMenuLabel, 0 , 0);
+  {;
     
-    add(oRowPosLabel, 0, 2);
-    add(oRow, 1, 2);
+    add(oRowPosLabel, 0, 0);
+    add(oRow, 1, 0);
     
-    add(oColumnPosLabel, 0, 3);
-    add(oColumn, 1, 3);
+    add(oColumnPosLabel, 0, 1);
+    add(oColumn, 1, 1);
     
-    add(oImageLabel, 0, 4);
-    add(oImage, 1, 4);
+    add(oImageLabel, 0, 2);
+    add(oImage, 1, 2);
     
-    add(oIsSolidLabel, 0, 5);
-    add(oIsSolid, 1, 5);
+    add(oIsSolidLabel, 0, 3);
+    add(oIsSolid, 1, 3);
     
-    add(oEventsLabel, 0, 6);
-    add(oEvents, 1, 6);
+    add(oEventsLabel, 0, 4);
+    add(oEvents, 1, 4);
   }
   
   
