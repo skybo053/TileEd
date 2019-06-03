@@ -17,6 +17,10 @@ public class TileMenu extends GridPane
   private Label oIsSolid        = null;
   private Label oEventsLabel    = null;
   private Label oEvents         = null;
+  private Label oWidthLabel     = null;
+  private Label oWidth          = null;
+  private Label oHeight         = null;
+  private Label oHeightLabel    = null;
   
   
   public TileMenu()
@@ -26,18 +30,24 @@ public class TileMenu extends GridPane
     oImageLabel     = new Label("Image: ");
     oIsSolidLabel   = new Label("Is Solid: ");
     oEventsLabel    = new Label("Tile Events: ");
+    oWidthLabel     = new Label("Width: ");
+    oHeightLabel    = new Label("Height: ");
     
     oRow     = new Label();
     oColumn  = new Label();
     oImage   = new Label();
     oIsSolid = new Label();
     oEvents  = new Label();
+    oWidth   = new Label();
+    oHeight  = new Label();
     
     GridPane.setMargin(oRowPosLabel,    new Insets(0,15,0,5));
     GridPane.setMargin(oColumnPosLabel, new Insets(0,15,0,5));
     GridPane.setMargin(oImageLabel,     new Insets(0,15,0,5));
     GridPane.setMargin(oIsSolidLabel,   new Insets(0,15,0,5));
     GridPane.setMargin(oEventsLabel,    new Insets(0,15,0,5));
+    GridPane.setMargin(oWidthLabel,     new Insets(0,15,0,5));
+    GridPane.setMargin(oHeightLabel,    new Insets(0,15,0,5));
     
     configureStyles();
     placeLabels();
@@ -51,22 +61,27 @@ public class TileMenu extends GridPane
   
   
   private void placeLabels()
-  {;
-    
+  {
     add(oRowPosLabel, 0, 0);
     add(oRow, 1, 0);
     
     add(oColumnPosLabel, 0, 1);
     add(oColumn, 1, 1);
     
-    add(oImageLabel, 0, 2);
-    add(oImage, 1, 2);
+    add(oWidthLabel, 0, 2);
+    add(oWidth, 1, 2);
     
-    add(oIsSolidLabel, 0, 3);
-    add(oIsSolid, 1, 3);
+    add(oHeightLabel, 0, 3);
+    add(oHeight, 1, 3);
     
-    add(oEventsLabel, 0, 4);
-    add(oEvents, 1, 4);
+    add(oImageLabel, 0, 4);
+    add(oImage, 1, 4);
+    
+    add(oIsSolidLabel, 0, 5);
+    add(oIsSolid, 1, 5);
+    
+    add(oEventsLabel, 0, 6);
+    add(oEvents, 1, 6);
   }
   
   
@@ -79,6 +94,18 @@ public class TileMenu extends GridPane
   public void setColumn(String pColumn)
   {
     oColumn.setText(pColumn);
+  }
+  
+  
+  public void setWidth(String pWidth)
+  {
+    oWidth.setText(pWidth);
+  }
+  
+  
+  public void setHeight(String pHeight)
+  {
+    oHeight.setText(pHeight);
   }
   
   

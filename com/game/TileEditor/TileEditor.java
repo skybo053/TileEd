@@ -16,6 +16,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -91,14 +92,14 @@ public class TileEditor extends Application
     oSideFlowPane              = new FlowPane();
     oTileAttribsTitledPane     = new TitledPane();
     oEditTileAttribsTitledPane = new TitledPane();
-    oEditTileAttribsTableView  = new TableView();
+    oEditTileAttribsTableView  = new TableView<>();
     
     buildMenu();
     configureMainBorderPane();
     configureMainGridPane();
     configureSideFlowPane();
-    configureTileAttribPane();
-    configureEditTileAttribsPane();
+    configureTileAttribTitlePane();
+    configureEditTileAttribsTitlePane();
     configureEditTileAttribsTableView();
   }
   
@@ -258,7 +259,7 @@ public class TileEditor extends Application
   }
   
   
-  private void configureTileAttribPane()
+  private void configureTileAttribTitlePane()
   {
     oTileAttribsTitledPane.setContent(oSideTileMenu);
     oTileAttribsTitledPane.setText("Tile Attributes");
@@ -266,7 +267,7 @@ public class TileEditor extends Application
   }
   
   
-  private void configureEditTileAttribsPane()
+  private void configureEditTileAttribsTitlePane()
   {
     oEditTileAttribsTitledPane.setContent(oEditTileAttribsTableView);
     oEditTileAttribsTitledPane.setText("Edit Tile");
@@ -284,6 +285,11 @@ public class TileEditor extends Application
   
     vTileAttribColumn.setSortable(false);
     vTileValueColumn.setSortable(false);
+    
+    
+    oEditTileAttribsTableView.getSelectionModel().setCellSelectionEnabled(true);
+    oEditTileAttribsTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+    
 
     vTileAttribColumn.setCellValueFactory(pArg->{
       return new ReadOnlyObjectWrapper<String>(pArg.getValue().getKey());
@@ -304,11 +310,19 @@ public class TileEditor extends Application
       
       vTableRow.setOnMouseClicked(pEvent->
       {
-        if(pEvent.getClickCount() == 2)
+        Pair<String, Object> vRowData    = null;
+        int                  vRowIndex   = -1;
+        int                  vClickCount = -1;
+        
+        vRowIndex   = vTableRow.getIndex();
+        vClickCount = pEvent.getClickCount();
+        
+        if(vClickCount == 2)
         {
-          System.out.println("Double clicked row " + pEvent.getSource() + 
-          "with index: " + vTableRow.getIndex() + " with id " + vTableRow.getId() +
-          " with item " + vTableRow.getItem().getKey() + ", " + vTableRow.getItem().getValue());
+          if(vRowIndex == 0)
+          {
+            System.out.println("Double clicked row index 0");
+          }
         }
       });
       
@@ -318,19 +332,31 @@ public class TileEditor extends Application
     oEditTileAttribsTableView.getColumns().addAll(vTileAttribColumn, vTileValueColumn);
     
     oEditTileAttribsTableView.setPrefHeight(200.0);
+    
+    //set editing config
+    
+    oEditTileAttribsTableView.setEditable(true);
+    
   }
   
   
   private void displayCurrentTileConfig()
   {
-    Integer vRowIndex = null;
-    Integer vColIndex = null;
+    Integer vRowIndex   = null;
+    Integer vColIndex   = null;
+    Integer vTileWidth  = null;
+    Integer vTileHeight = null;
     
-    vRowIndex = GridPane.getRowIndex(oCurrentTile)    + 1;
-    vColIndex = GridPane.getColumnIndex(oCurrentTile) + 1;
+    vRowIndex   = GridPane.getRowIndex(oCurrentTile)    + 1;
+    vColIndex   = GridPane.getColumnIndex(oCurrentTile) + 1;
+    
+    vTileWidth  = oCurrentTile.getTileWidth();
+    vTileHeight = oCurrentTile.getTileHeight();
     
     oSideTileMenu.setRow(vRowIndex.toString());
     oSideTileMenu.setColumn(vColIndex.toString());
+    oSideTileMenu.setWidth(vTileWidth.toString());
+    oSideTileMenu.setHeight(vTileHeight.toString());
     oSideTileMenu.setImage(oCurrentTile.getTileImageName());
     oSideTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
     oSideTileMenu.setEvents(oCurrentTile.getTileEvents());
