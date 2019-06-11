@@ -6,8 +6,6 @@ import com.game.EventHandlers.ExitHandler;
 import com.game.EventHandlers.NewProjectHandler;
 
 import javafx.application.Application;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -16,19 +14,12 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 
 public class TileEditor extends Application
@@ -44,18 +35,17 @@ public class TileEditor extends Application
   private static final int    TILE_LENGTH        = 45;
   
   
-  private Scene      oScene                     = null;
-  private MenuBar    oMenuBar                   = null;
-  private Menu       oFileMenu                  = null;
-  private BorderPane oMainBorderPane            = null;
-  private ScrollPane oMainScrollPane            = null;
-  private GridPane   oMainGridPane              = null;
-  private TileMenu   oSideTileMenu              = null;
-  private FlowPane   oSideFlowPane              = null;
-  private TitledPane oTileAttribsTitledPane     = null;
-  private TitledPane oEditTileAttribsTitledPane = null;
-  
-  private TableView<Pair<String, Object>>  oEditTileAttribsTableView  = null;
+  private Scene            oScene                     = null;
+  private MenuBar          oMenuBar                   = null;
+  private Menu             oFileMenu                  = null;
+  private BorderPane       oMainBorderPane            = null;
+  private ScrollPane       oMainScrollPane            = null;
+  private GridPane         oMainGridPane              = null;
+  private TileMenu         oSideTileMenu              = null;
+  private TileEditableMenu oSideEditableTileMenu      = null;
+  private FlowPane         oSideFlowPane              = null;
+  private TitledPane       oTileAttribsTitledPane     = null;
+  private TitledPane       oEditTileAttribsTitledPane = null;
   
   private Tile oCurrentTile  = null;
   private Tile oPreviousTile = null;
@@ -89,10 +79,10 @@ public class TileEditor extends Application
     oMainGridPane              = new GridPane();
     oMainScrollPane            = new ScrollPane();
     oSideTileMenu              = new TileMenu();
+    oSideEditableTileMenu      = new TileEditableMenu();
     oSideFlowPane              = new FlowPane();
     oTileAttribsTitledPane     = new TitledPane();
     oEditTileAttribsTitledPane = new TitledPane();
-    oEditTileAttribsTableView  = new TableView<>();
     
     buildMenu();
     configureMainBorderPane();
@@ -100,7 +90,6 @@ public class TileEditor extends Application
     configureSideFlowPane();
     configureTileAttribTitlePane();
     configureEditTileAttribsTitlePane();
-    configureEditTileAttribsTableView();
   }
   
   
@@ -269,74 +258,9 @@ public class TileEditor extends Application
   
   private void configureEditTileAttribsTitlePane()
   {
-    oEditTileAttribsTitledPane.setContent(oEditTileAttribsTableView);
+    oEditTileAttribsTitledPane.setContent(oSideEditableTileMenu);
     oEditTileAttribsTitledPane.setText("Edit Tile");
     oEditTileAttribsTitledPane.setPrefWidth(SIDE_PANE_WIDTH);
-  }
-  
-  
-  private void configureEditTileAttribsTableView()
-  {
-    TableColumn<Pair<String, Object>, String> vTileAttribColumn = null;
-    TableColumn<Pair<String, Object>, Object> vTileValueColumn  = null;
-      
-    vTileAttribColumn = new TableColumn<Pair<String, Object>, String>("Tile Attribute");
-    vTileValueColumn  = new TableColumn<Pair<String, Object>, Object>("Tile Value");
-  
-    vTileAttribColumn.setSortable(false);
-    vTileValueColumn.setSortable(false);
-    
-    
-    oEditTileAttribsTableView.getSelectionModel().setCellSelectionEnabled(true);
-    oEditTileAttribsTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-    
-
-    vTileAttribColumn.setCellValueFactory(pArg->{
-      return new ReadOnlyObjectWrapper<String>(pArg.getValue().getKey());
-    });
-    
-    vTileValueColumn.setCellValueFactory(pArg->{
-      
-      Object vObjectValue = null;
-      
-      vObjectValue = pArg.getValue().getValue();
-      
-      return new ReadOnlyObjectWrapper<>(((vObjectValue == null) ? "Not Set" : vObjectValue)); 
-    });
-    
-    oEditTileAttribsTableView.setRowFactory(pTableView ->
-    {
-      TableRow<Pair<String, Object>> vTableRow = new TableRow<>();
-      
-      vTableRow.setOnMouseClicked(pEvent->
-      {
-        Pair<String, Object> vRowData    = null;
-        int                  vRowIndex   = -1;
-        int                  vClickCount = -1;
-        
-        vRowIndex   = vTableRow.getIndex();
-        vClickCount = pEvent.getClickCount();
-        
-        if(vClickCount == 2)
-        {
-          if(vRowIndex == 0)
-          {
-            System.out.println("Double clicked row index 0");
-          }
-        }
-      });
-      
-      return vTableRow;
-    });
-    
-    oEditTileAttribsTableView.getColumns().addAll(vTileAttribColumn, vTileValueColumn);
-    
-    oEditTileAttribsTableView.setPrefHeight(200.0);
-    
-    //set editing config
-    
-    oEditTileAttribsTableView.setEditable(true);
-    
   }
   
   
@@ -361,27 +285,14 @@ public class TileEditor extends Application
     oSideTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
     oSideTileMenu.setEvents(oCurrentTile.getTileEvents());
   }
+
   
-  
-  private void displayCurrentTileEditableConfig()
+  private void displayEditableTileConfig()
   {
-    ObservableList<Pair<String, Object>> vTableViewData = null;
-    
-    vTableViewData = FXCollections.observableArrayList(
-        new Pair<String, Object>(
-            "IsSolid", 
-            oCurrentTile.isSolid()),
-        new Pair<String, Object>(
-            "Image",
-            oCurrentTile.getTileImage() == null 
-                ? null 
-                : new ImageView(oCurrentTile.getTileImage().getImage())),
-        new Pair<String, Object>("TileEvents", new String[]{"TileEvent1", "TileEvent2"})
-        );
-    
-    oEditTileAttribsTableView.getItems().setAll(vTableViewData);
+    oSideEditableTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
+    oSideEditableTileMenu.setImageView(oCurrentTile.getTileImage());
   }
-  
+ 
   
   //Tile Handler class
   private class TileClickHandler implements EventHandler<MouseEvent>
@@ -398,7 +309,7 @@ public class TileEditor extends Application
       oCurrentTile.setTileStyle(SELECTED_GRID_CELL);
       
       displayCurrentTileConfig();
-      displayCurrentTileEditableConfig();
+      displayEditableTileConfig();
       
       oPreviousTile = oCurrentTile;
       
@@ -406,30 +317,6 @@ public class TileEditor extends Application
     }
   }
   
-  
-  private class ValueCell extends TableCell<Pair<String, Object>, Object>
-  {
-    public void updateItem(Object pItem, boolean pEmpty)
-    {
-      super.updateItem(pItem, pEmpty);
-      
-      if(pItem == null)
-      {
-        setText("Not Set");
-      }
-      else if(pItem instanceof String || pItem instanceof Boolean)
-      {
-        setText(pItem.toString());
-      }
-      else if(pItem instanceof ImageView)
-      {
-        ImageView vImageView = (ImageView)pItem;
-        vImageView.setPreserveRatio(true);
-        vImageView.setSmooth(true);
-        setGraphic(vImageView);
-      }
-    }
-  }
   
 }
   

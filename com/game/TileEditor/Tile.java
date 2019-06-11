@@ -63,9 +63,22 @@ public class Tile extends StackPane
   }
   
   
-  public ImageView getTileImage()
+  public ImageView getTileImageView()
   {
     return oImageView;
+  }
+  
+  
+  public Image getTileImage()
+  {
+    if(oImageView == null)
+    {
+      return null;
+    }
+    else
+    {
+      return oImageView.getImage();
+    }
   }
   
   
