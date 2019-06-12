@@ -35,6 +35,8 @@ public class TileEditableMenu extends GridPane
   
   private Label oNoImageLabel = null;
   
+  private Tile oCurrentTile = null;
+  
   
   public TileEditableMenu()
   {
@@ -68,7 +70,7 @@ public class TileEditableMenu extends GridPane
     oNoImageLabel  = new Label("No Image");
     
     setColumnConstraints();
-    setRowStyles();
+    setBaseRowStyles();
     setClickHandlers();
     placeLabelsInPanes();
     placePanesInGridPane();
@@ -89,7 +91,7 @@ public class TileEditableMenu extends GridPane
   }
   
   
-  private void setRowStyles()
+  private void setBaseRowStyles()
   {
     oIsSolidLabelStackPane.setStyle("-fx-background-color: #f4f5f7;");
     oIsSolidStackPane.setStyle("-fx-background-color: #f4f5f7;");
@@ -164,18 +166,28 @@ public class TileEditableMenu extends GridPane
   }
   
   
+  public void setCurrentTile(Tile pTile)
+  {
+    oCurrentTile = pTile;
+  }
+  
+  
   private class TileEditableMenuClickHandler implements EventHandler<MouseEvent>
   {
     public void handle(MouseEvent pMouseEvent)
     {
       StackPane vClickedPane = null;
       
-      vClickedPane = (StackPane)pMouseEvent.getSource();
-      
-      if(GridPane.getRowIndex(vClickedPane) == 0)
+      if(pMouseEvent.getClickCount() == 2 && oCurrentTile != null)
       {
-        System.out.println("Clicked row 1!!");
+        vClickedPane = (StackPane)pMouseEvent.getSource();
+        
+        if(GridPane.getRowIndex(vClickedPane) == 0)
+        {
+          System.out.println("Clicked row 1!!");
+        }
       }
+     
     }
     
     

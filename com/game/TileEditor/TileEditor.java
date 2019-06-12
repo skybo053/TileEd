@@ -301,6 +301,8 @@ public class TileEditor extends Application
     {
       oCurrentTile = (Tile)pMouseEvent.getSource();
       
+      oSideEditableTileMenu.setCurrentTile(oCurrentTile);
+      
       if(oPreviousTile != null)
       {
         oPreviousTile.setTileStyle(GRID_CELL);
