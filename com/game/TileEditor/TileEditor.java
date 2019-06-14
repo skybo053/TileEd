@@ -308,6 +308,7 @@ public class TileEditor extends Application
       oCurrentTile = (Tile)pMouseEvent.getSource();
       
       oSideEditableTileMenu.setCurrentTile(oCurrentTile);
+      oSideEditableTileMenu.clearAttributeValues();
       
       if(oPreviousTile != null)
       {

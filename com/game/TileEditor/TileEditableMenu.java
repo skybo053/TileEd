@@ -4,6 +4,7 @@ package com.game.TileEditor;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -23,6 +24,7 @@ public class TileEditableMenu extends GridPane
   private Label     oTileEventsLabel = null;
   
   private Label     oIsSolid         = null;
+  private Label     oImageView       = null;
   private Label     oTileEvents      = null;
   
   private StackPane oIsSolidLabelStackPane    = null;
@@ -36,11 +38,9 @@ public class TileEditableMenu extends GridPane
   private TextField oIsSolidTextField = null;
   
   private ImageView oEditableImage = null;
+  private Label     oNoImageLabel  = null;
   
-  private Label oNoImageLabel = null;
-  
-  private Tile oCurrentTile = null;
-  
+  private Tile     oCurrentTile  = null;
   private TileMenu oSideTileMenu = null;
   
   
@@ -53,6 +53,7 @@ public class TileEditableMenu extends GridPane
     oTileEventsLabel = new Label("TileEvents:");
     
     oIsSolid    = new Label();
+    oImageView  = new Label();
     oTileEvents = new Label();
     
     oIsSolidLabel.setPadding(   new Insets(0,15,0,5));
@@ -67,21 +68,19 @@ public class TileEditableMenu extends GridPane
     oTileEventsStackPane      = new StackPane();
     
     oIsSolidTextField = new TextField();
-    oIsSolidTextField.setOnKeyPressed(new IsSolidTextFieldHandler());
     
-    oIsSolidLabelStackPane.setAlignment(Pos.CENTER_LEFT);
-    oImageViewLabelStackPane.setAlignment(Pos.CENTER_LEFT);
+    oIsSolidLabelStackPane.setAlignment(   Pos.CENTER_LEFT);
+    oImageViewLabelStackPane.setAlignment( Pos.CENTER_LEFT);
     oTileEventsLabelStackPane.setAlignment(Pos.CENTER_LEFT);
-    oIsSolidStackPane.setAlignment(Pos.CENTER_LEFT);
-    oImageViewStackPane.setAlignment(Pos.CENTER_LEFT);
-    oTileEventsStackPane.setAlignment(Pos.CENTER_LEFT);
+    oIsSolidStackPane.setAlignment(        Pos.CENTER_LEFT);
+    oImageViewStackPane.setAlignment(      Pos.CENTER_LEFT);
+    oTileEventsStackPane.setAlignment(     Pos.CENTER_LEFT);
     
     oEditableImage = new ImageView();
-    oNoImageLabel  = new Label("No Image");
     
     setColumnConstraints();
     setBaseRowStyles();
-    setClickHandlers();
+    setHandlers();
     placeLabelsInPanes();
     placePanesInGridPane();
   }
@@ -90,8 +89,14 @@ public class TileEditableMenu extends GridPane
   public void clearAttributeValues()
   {
     oIsSolid.setText(null);
-    clearImageStackPane();
     oTileEvents.setText(null);
+    
+    clearPane(oIsSolidStackPane);
+    clearPane(oImageViewStackPane);
+    clearPane(oTileEventsStackPane);
+    
+    addToPane(oIsSolidStackPane, oIsSolid);
+    addToPane(oTileEventsStackPane, oTileEvents);
   }
   
   
@@ -120,8 +125,9 @@ public class TileEditableMenu extends GridPane
   }
   
   
-  private void setClickHandlers()
+  private void setHandlers()
   {
+    oIsSolidTextField.setOnKeyPressed(new IsSolidTextFieldHandler());
     oIsSolidLabelStackPane.setOnMouseClicked(new EditableMenuClickHandler());
     oIsSolidStackPane.setOnMouseClicked(new EditableMenuClickHandler());
   }
@@ -129,11 +135,12 @@ public class TileEditableMenu extends GridPane
   
   private void placeLabelsInPanes()
   {
-    oIsSolidLabelStackPane.getChildren().add(oIsSolidLabel);
-    oImageViewLabelStackPane.getChildren().add(oImageViewLabel);
-    oTileEventsLabelStackPane.getChildren().add(oTileEventsLabel);
-    oIsSolidStackPane.getChildren().add(oIsSolid);
-    oTileEventsStackPane.getChildren().add(oTileEvents);
+    addToPane(oIsSolidLabelStackPane,    oIsSolidLabel);
+    addToPane(oImageViewLabelStackPane,  oImageViewLabel);
+    addToPane(oTileEventsLabelStackPane, oTileEventsLabel);
+    addToPane(oIsSolidStackPane,         oIsSolid);
+    addToPane(oImageViewStackPane,       oImageView);
+    addToPane(oTileEventsStackPane,      oTileEvents);
   }
   
   
@@ -149,6 +156,7 @@ public class TileEditableMenu extends GridPane
     add(oTileEventsStackPane, 1, 2);
   }
   
+  
   public void setIsSolid(String pIsSolid)
   {
     oIsSolid.setText(pIsSolid);
@@ -157,17 +165,17 @@ public class TileEditableMenu extends GridPane
   
   public void setImageView(Image pImage)
   {
-    clearImageStackPane();
+    clearPane(oImageViewStackPane);
  
     if(pImage == null)
     {
-      oImageViewStackPane.getChildren().add(oNoImageLabel);
+      oImageView.setText("No Image");
+      addToPane(oImageViewStackPane, oImageView);
     }
     else
     {
       oEditableImage.setImage(pImage);
-      
-      oImageViewStackPane.getChildren().add(oEditableImage);
+      addToPane(oImageViewStackPane, oEditableImage);
     }
   }
   
@@ -178,18 +186,39 @@ public class TileEditableMenu extends GridPane
   }
   
   
-  public void clearImageStackPane()
-  {
-    oImageViewStackPane.getChildren().clear();
-  }
-  
-  
   public void setCurrentTile(Tile pTile)
   {
     oCurrentTile = pTile;
   }
   
   
+  public void clearPane(StackPane pStackPane)
+  {
+    pStackPane.getChildren().clear();
+  }
+  
+  
+  public void addToPane(StackPane pStackPane, Node pNode)
+  {
+    try
+    {
+      pStackPane.getChildren().add(pNode);
+    }
+    catch(IllegalArgumentException IAE)
+    {
+      IAE.printStackTrace();
+      System.out.println(IAE.getMessage());
+    }
+    catch(NullPointerException NPE)
+    {
+      NPE.printStackTrace();
+      System.out.println(NPE.getMessage());
+    }
+    
+  }
+  
+  
+  /////// Inner class to handle edit menu clicks ////////
   private class EditableMenuClickHandler implements EventHandler<MouseEvent>
   {
     public void handle(MouseEvent pMouseEvent)
@@ -202,7 +231,6 @@ public class TileEditableMenu extends GridPane
         
         if(GridPane.getRowIndex(vClickedPane) == 0)
         {
-          System.out.println("Clicked row 1!!");
           editIsSolidRow();
         }
       }
@@ -211,15 +239,16 @@ public class TileEditableMenu extends GridPane
     
     private void editIsSolidRow()
     {
-      oIsSolidStackPane.getChildren().clear();
-      
       oIsSolidTextField.setText(oIsSolid.getText());
-      oIsSolidStackPane.getChildren().add(oIsSolidTextField);
+      
+      clearPane(oIsSolidStackPane);
+      addToPane(oIsSolidStackPane, oIsSolidTextField);
     }
   } //End of EditableMenuClickHandler class
   
   
   
+  ///////// Inner class to handle Is solid text field entries ///////////
   private class IsSolidTextFieldHandler implements EventHandler<KeyEvent>
   {
     public void handle(KeyEvent pKeyEvent) 
@@ -239,8 +268,8 @@ public class TileEditableMenu extends GridPane
           oSideTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
         }
         
-        oIsSolidStackPane.getChildren().clear();
-        oIsSolidStackPane.getChildren().add(oIsSolid);
+        clearPane(oIsSolidStackPane);
+        addToPane(oIsSolidStackPane, oIsSolid);
       }
     }
   } //End of IsSolidTextFieldHandler class

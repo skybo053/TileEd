@@ -28,7 +28,7 @@ public class TileMenu extends GridPane
     oRowPosLabel    = new Label("Row: ");
     oColumnPosLabel = new Label("Column: ");
     oImageLabel     = new Label("Image: ");
-    oIsSolidLabel   = new Label("Is Solid: ");
+    oIsSolidLabel   = new Label("IsSolid: ");
     oEventsLabel    = new Label("Tile Events: ");
     oWidthLabel     = new Label("Width: ");
     oHeightLabel    = new Label("Height: ");
