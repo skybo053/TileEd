@@ -54,6 +54,18 @@ public class TileMenu extends GridPane
   }
   
   
+  public void clearAttributeValues()
+  {
+    oRow.setText(null);
+    oColumn.setText(null);
+    oImage.setText(null);
+    oIsSolid.setText(null);
+    oEvents.setText(null);
+    oWidth.setText(null);
+    oHeight.setText(null);
+  }
+  
+
   private void configureStyles()
   {
     

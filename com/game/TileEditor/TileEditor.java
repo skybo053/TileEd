@@ -79,7 +79,7 @@ public class TileEditor extends Application
     oMainGridPane              = new GridPane();
     oMainScrollPane            = new ScrollPane();
     oSideTileMenu              = new TileMenu();
-    oSideEditableTileMenu      = new TileEditableMenu();
+    oSideEditableTileMenu      = new TileEditableMenu(oSideTileMenu);
     oSideFlowPane              = new FlowPane();
     oTileAttribsTitledPane     = new TitledPane();
     oEditTileAttribsTitledPane = new TitledPane();
@@ -191,6 +191,12 @@ public class TileEditor extends Application
       if(oCurrentTile != null)
       {
         oCurrentTile.setTileStyle(GRID_CELL);
+        
+        oSideTileMenu.clearAttributeValues();
+        oSideEditableTileMenu.clearAttributeValues();
+        
+        oCurrentTile = null;
+        oSideEditableTileMenu.setCurrentTile(null);
       }
     });
   }
