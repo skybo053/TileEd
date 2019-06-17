@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -15,6 +16,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 
 public class TileEditableMenu extends GridPane
@@ -43,10 +46,12 @@ public class TileEditableMenu extends GridPane
   private Tile     oCurrentTile  = null;
   private TileMenu oSideTileMenu = null;
   
+  private Stage    oLoadedImagesMenuStage = null;
+  
   
   public TileEditableMenu(TileMenu pSideTileMenu)
   {
-    oSideTileMenu    = pSideTileMenu;
+    oSideTileMenu          = pSideTileMenu;
 
     oIsSolidLabel    = new Label("IsSolid: ");
     oImageViewLabel  = new Label("Image: ");
@@ -78,11 +83,23 @@ public class TileEditableMenu extends GridPane
     
     oEditableImage = new ImageView();
     
+    initializeLoadedImagesMenuStage();
     setColumnConstraints();
     setBaseRowStyles();
-    setHandlers();
     placeLabelsInPanes();
     placePanesInGridPane();
+    setHandlers();
+  }
+  
+  
+  private void initializeLoadedImagesMenuStage()
+  {
+    oLoadedImagesMenuStage = new Stage();
+    
+    oLoadedImagesMenuStage.setTitle("Loaded Images");
+    oLoadedImagesMenuStage.setScene(new Scene(new LoadedImagesMenu()));
+    oLoadedImagesMenuStage.setResizable(false);
+    oLoadedImagesMenuStage.initModality(Modality.APPLICATION_MODAL);
   }
   
   
@@ -128,8 +145,13 @@ public class TileEditableMenu extends GridPane
   private void setHandlers()
   {
     oIsSolidTextField.setOnKeyPressed(new IsSolidTextFieldHandler());
-    oIsSolidLabelStackPane.setOnMouseClicked(new EditableMenuClickHandler());
-    oIsSolidStackPane.setOnMouseClicked(new EditableMenuClickHandler());
+    
+    for(Node vNode : this.getChildren())
+    {
+      vNode.setOnMouseClicked(new EditableMenuClickHandler());
+    }
+    /*oIsSolidLabelStackPane.setOnMouseClicked(new EditableMenuClickHandler());
+    oIsSolidStackPane.setOnMouseClicked(new EditableMenuClickHandler());*/
   }
   
   
@@ -200,21 +222,7 @@ public class TileEditableMenu extends GridPane
   
   public void addToPane(StackPane pStackPane, Node pNode)
   {
-    try
-    {
-      pStackPane.getChildren().add(pNode);
-    }
-    catch(IllegalArgumentException IAE)
-    {
-      IAE.printStackTrace();
-      System.out.println(IAE.getMessage());
-    }
-    catch(NullPointerException NPE)
-    {
-      NPE.printStackTrace();
-      System.out.println(NPE.getMessage());
-    }
-    
+    pStackPane.getChildren().add(pNode);
   }
   
   
@@ -232,6 +240,10 @@ public class TileEditableMenu extends GridPane
         if(GridPane.getRowIndex(vClickedPane) == 0)
         {
           editIsSolidRow();
+        }
+        else if(GridPane.getRowIndex(vClickedPane) == 1)
+        {
+          oLoadedImagesMenuStage.show();
         }
       }
     }
