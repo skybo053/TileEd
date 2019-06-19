@@ -41,7 +41,6 @@ public class TileEditableMenu extends GridPane
   private TextField oIsSolidTextField = null;
   
   private ImageView oEditableImage = null;
-  private Label     oNoImageLabel  = null;
   
   private Tile     oCurrentTile  = null;
   private TileMenu oSideTileMenu = null;
@@ -51,7 +50,7 @@ public class TileEditableMenu extends GridPane
   
   public TileEditableMenu(TileMenu pSideTileMenu)
   {
-    oSideTileMenu          = pSideTileMenu;
+    oSideTileMenu    = pSideTileMenu;
 
     oIsSolidLabel    = new Label("IsSolid: ");
     oImageViewLabel  = new Label("Image: ");
@@ -146,12 +145,10 @@ public class TileEditableMenu extends GridPane
   {
     oIsSolidTextField.setOnKeyPressed(new IsSolidTextFieldHandler());
     
-    for(Node vNode : this.getChildren())
+    for(Node vNode : getChildren())
     {
       vNode.setOnMouseClicked(new EditableMenuClickHandler());
     }
-    /*oIsSolidLabelStackPane.setOnMouseClicked(new EditableMenuClickHandler());
-    oIsSolidStackPane.setOnMouseClicked(new EditableMenuClickHandler());*/
   }
   
   

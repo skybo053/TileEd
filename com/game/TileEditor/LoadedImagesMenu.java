@@ -1,13 +1,18 @@
 package com.game.TileEditor;
 
+import com.game.EventHandlers.LoadImagesHandler;
+
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
+
 
 public class LoadedImagesMenu extends BorderPane
 {
@@ -18,20 +23,41 @@ public class LoadedImagesMenu extends BorderPane
   private static final double BUTTON_HEIGHT          = 20.0;
   private static final double BUTTON_WIDTH           = 80.0;
   
+  private int oRowCount = 0;
+  
   
   public LoadedImagesMenu()
   {
-    GridPane   vNameImageGridPane = null;
-    GridPane   vButtonGridPane    = null;
+    GridPane   vNameImageGridPane   = null;
+    GridPane   vButtonGridPane      = null;
+    ScrollPane vNameImageScrollPane = null;
+    
+    vNameImageScrollPane = new ScrollPane();
     
     setPrefHeight(HEIGHT);
     setPrefWidth(WIDTH);
     
-    vNameImageGridPane = getNameImageGridPane();
-    vButtonGridPane    = getButtonGridPane();
+    vNameImageGridPane   = getNameImageGridPane();
+    vButtonGridPane      = getButtonGridPane();
+    vNameImageScrollPane = getNameImageScrollPane();
     
-    setCenter(vNameImageGridPane);
+    vNameImageScrollPane.setContent(vNameImageGridPane);
+    setCenter(vNameImageScrollPane);
     setBottom(vButtonGridPane);
+  }
+  
+  
+  private ScrollPane getNameImageScrollPane()
+  {
+    ScrollPane vScrollPane = null;
+    
+    vScrollPane = new ScrollPane();
+    
+    vScrollPane.setFitToHeight(true);
+    vScrollPane.setFitToWidth(true);
+    vScrollPane.getStyleClass().clear();
+    
+    return vScrollPane;
   }
   
   
@@ -43,10 +69,33 @@ public class LoadedImagesMenu extends BorderPane
     
     setColumnConstraints(vGridPane);
     
-    vGridPane.add(new Label("Image Name"), 0, 0);
-    vGridPane.add(new Label("Image"), 1, 0);
-    
-    vGridPane.setStyle("-fx-background-color: cyan;");
+    for(int i = 0; i < 4; ++i)
+    {
+      StackPane vStackPaneName  = null;
+      StackPane vStackPaneImage = null;
+      
+      vStackPaneName  = new StackPane();
+      vStackPaneImage = new StackPane();
+      
+      if(oRowCount % 2 == 0)
+      {
+        vStackPaneName.setStyle("-fx-background-color: #f4f5f7;");
+        vStackPaneImage.setStyle("-fx-background-color: #f4f5f7;");
+      }
+      else
+      {
+        vStackPaneName.setStyle("-fx-background-color: white;");
+        vStackPaneImage.setStyle("-fx-background-color: white;");
+      }
+      
+      vStackPaneName.getChildren().add(new Label("Image Name"));
+      vStackPaneImage.getChildren().add(new Label("Image"));
+      
+      vGridPane.add(vStackPaneName, 0, i);
+      vGridPane.add(vStackPaneImage, 1, i);
+      
+      ++oRowCount;
+    }
  
     
     return vGridPane;
@@ -76,6 +125,7 @@ public class LoadedImagesMenu extends BorderPane
     
     vAddButton.setPrefHeight(BUTTON_HEIGHT);
     vAddButton.setPrefWidth(BUTTON_WIDTH);
+    vAddButton.setOnMouseClicked(new LoadImagesHandler(this));
     
     vDeleteButton.setPrefHeight(BUTTON_HEIGHT);
     vDeleteButton.setPrefWidth(BUTTON_WIDTH);
