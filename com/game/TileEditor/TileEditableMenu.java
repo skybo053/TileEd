@@ -42,15 +42,17 @@ public class TileEditableMenu extends GridPane
   
   private ImageView oEditableImage = null;
   
-  private Tile     oCurrentTile  = null;
-  private TileMenu oSideTileMenu = null;
+  private Tile     oCurrentTile           = null;
+  private TileMenu oSideTileMenu          = null;
   
+  private Scene    oLoadedImagesMenuScene = null;
   private Stage    oLoadedImagesMenuStage = null;
   
   
-  public TileEditableMenu(TileMenu pSideTileMenu)
+  public TileEditableMenu(TileMenu pSideTileMenu, Scene pLoadedImagesMenuScene)
   {
-    oSideTileMenu    = pSideTileMenu;
+    oSideTileMenu          = pSideTileMenu;
+    oLoadedImagesMenuScene = pLoadedImagesMenuScene;
 
     oIsSolidLabel    = new Label("IsSolid: ");
     oImageViewLabel  = new Label("Image: ");
@@ -96,7 +98,7 @@ public class TileEditableMenu extends GridPane
     oLoadedImagesMenuStage = new Stage();
     
     oLoadedImagesMenuStage.setTitle("Loaded Images");
-    oLoadedImagesMenuStage.setScene(new Scene(new LoadedImagesMenu()));
+    oLoadedImagesMenuStage.setScene(oLoadedImagesMenuScene);
     oLoadedImagesMenuStage.setResizable(false);
     oLoadedImagesMenuStage.initModality(Modality.APPLICATION_MODAL);
   }

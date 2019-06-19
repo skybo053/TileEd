@@ -7,6 +7,7 @@ import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -23,12 +24,13 @@ public class LoadedImagesMenu extends BorderPane
   private static final double BUTTON_HEIGHT          = 20.0;
   private static final double BUTTON_WIDTH           = 80.0;
   
+  private GridPane oNameImageGridPane = null;
+  
   private int oRowCount = 0;
   
   
   public LoadedImagesMenu()
   {
-    GridPane   vNameImageGridPane   = null;
     GridPane   vButtonGridPane      = null;
     ScrollPane vNameImageScrollPane = null;
     
@@ -37,11 +39,11 @@ public class LoadedImagesMenu extends BorderPane
     setPrefHeight(HEIGHT);
     setPrefWidth(WIDTH);
     
-    vNameImageGridPane   = getNameImageGridPane();
+    oNameImageGridPane   = getNameImageGridPane();
     vButtonGridPane      = getButtonGridPane();
     vNameImageScrollPane = getNameImageScrollPane();
     
-    vNameImageScrollPane.setContent(vNameImageGridPane);
+    vNameImageScrollPane.setContent(oNameImageGridPane);
     setCenter(vNameImageScrollPane);
     setBottom(vButtonGridPane);
   }
@@ -69,11 +71,17 @@ public class LoadedImagesMenu extends BorderPane
     
     setColumnConstraints(vGridPane);
     
-    for(int i = 0; i < 4; ++i)
+    return vGridPane;
+  }
+  
+  
+  public void addRow(String pImageName, ImageView pImageView)
+  {
+    StackPane vStackPaneName  = null;
+    StackPane vStackPaneImage = null;
+    
+    try
     {
-      StackPane vStackPaneName  = null;
-      StackPane vStackPaneImage = null;
-      
       vStackPaneName  = new StackPane();
       vStackPaneImage = new StackPane();
       
@@ -88,17 +96,19 @@ public class LoadedImagesMenu extends BorderPane
         vStackPaneImage.setStyle("-fx-background-color: white;");
       }
       
-      vStackPaneName.getChildren().add(new Label("Image Name"));
-      vStackPaneImage.getChildren().add(new Label("Image"));
+      vStackPaneName.getChildren().add(new Label(pImageName));
+      vStackPaneImage.getChildren().add(pImageView == null ? new Label("No Image") : pImageView);
       
-      vGridPane.add(vStackPaneName, 0, i);
-      vGridPane.add(vStackPaneImage, 1, i);
+      oNameImageGridPane.add(vStackPaneName, 0, oRowCount);
+      oNameImageGridPane.add(vStackPaneImage, 1, oRowCount);
       
       ++oRowCount;
     }
- 
-    
-    return vGridPane;
+    catch(NullPointerException e)
+    {
+      e.printStackTrace();
+    }
+   
   }
   
   

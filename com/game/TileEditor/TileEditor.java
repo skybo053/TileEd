@@ -46,6 +46,7 @@ public class TileEditor extends Application
   private FlowPane         oSideFlowPane              = null;
   private TitledPane       oTileAttribsTitledPane     = null;
   private TitledPane       oEditTileAttribsTitledPane = null;
+  private Scene            oLoadedImagesMenuScene     = null;
   
   private Tile oCurrentTile  = null;
   private Tile oPreviousTile = null;
@@ -73,13 +74,14 @@ public class TileEditor extends Application
 
   private void initialize()
   {
+    oLoadedImagesMenuScene     = new Scene(new LoadedImagesMenu());
     oMainBorderPane            = new BorderPane();
     oMenuBar                   = new MenuBar();
     oFileMenu                  = new Menu("File");
     oMainGridPane              = new GridPane();
     oMainScrollPane            = new ScrollPane();
     oSideTileMenu              = new TileMenu();
-    oSideEditableTileMenu      = new TileEditableMenu(oSideTileMenu);
+    oSideEditableTileMenu      = new TileEditableMenu(oSideTileMenu, oLoadedImagesMenuScene);
     oSideFlowPane              = new FlowPane();
     oTileAttribsTitledPane     = new TitledPane();
     oEditTileAttribsTitledPane = new TitledPane();
