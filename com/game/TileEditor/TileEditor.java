@@ -32,7 +32,8 @@ public class TileEditor extends Application
   private static final double SCENE_WIDTH        = 1000.0;
   private static final double SCENE_HEIGHT       = 800.0;
   private static final double SIDE_PANE_WIDTH    = 200.0;
-  private static final int    TILE_LENGTH        = 45;
+  
+  public  static final int    TILE_LENGTH        = 45;
   
   
   private Scene            oScene                     = null;

@@ -1,6 +1,11 @@
 package com.game.EventHandlers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import com.game.TileEditor.LoadedImagesMenu;
+import com.game.TileEditor.TileEditor;
 
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -10,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -33,6 +39,7 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   private ImageView        oEnteredImageView      = null;
   private TextField        oImageNameTextField    = null;
   private LoadedImagesMenu oLoadedImagesMenu      = null;
+  private FileChooser      oFileChooser           = null;
   
   
   public LoadImagesHandler(LoadedImagesMenu pLoadedImagesMenu)
@@ -42,6 +49,7 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
     oEnteredImageNameLabel = new Label();
     oEnteredImageView      = new ImageView();
     oImageNameTextField    = new TextField();
+    oFileChooser           = new FileChooser();
   }
   
   
@@ -192,13 +200,36 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   {
     public void handle(MouseEvent pMouseEvent)
     {
-      FileChooser vFileChooser = null;
-      Node        vNode        = null;
+      File        vChoosenFile     = null;
+      String      vChoosenFilePath = null;
+      Node        vNode            = null;
+      Image       vImage           = null;
       
-      vNode        = (Node) pMouseEvent.getSource();
-      vFileChooser = new FileChooser();
-      
-      vFileChooser.showOpenDialog(vNode.getScene().getWindow());
+      try
+      {
+        vNode        = (Node) pMouseEvent.getSource();
+        
+        vChoosenFile = oFileChooser.showOpenDialog(vNode.getScene().getWindow());
+        
+        if(vChoosenFile != null)
+        {
+          vChoosenFilePath = vChoosenFile.getAbsolutePath();
+          
+          vImage = new Image(
+              new FileInputStream(vChoosenFilePath),
+              TileEditor.TILE_LENGTH,
+              TileEditor.TILE_LENGTH,
+              true,
+              true);
+          
+          oEnteredImageView.setImage(vImage);
+        }
+       
+      }
+      catch(FileNotFoundException pFileNotFoundException)
+      {
+        System.out.println("Unable to load image - " + pFileNotFoundException.getMessage());
+      }
     }
   }//End BrowseImageButtonClick class
   
