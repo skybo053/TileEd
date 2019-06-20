@@ -12,6 +12,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -36,7 +37,8 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   
   private Stage            oStage                 = null;
   private Label            oEnteredImageNameLabel = null;
-  private ImageView        oEnteredImageView      = null;
+  private ImageView        oImageView             = null;
+  private Image            oImage                 = null;
   private TextField        oImageNameTextField    = null;
   private LoadedImagesMenu oLoadedImagesMenu      = null;
   private FileChooser      oFileChooser           = null;
@@ -47,7 +49,7 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
     oLoadedImagesMenu      = pLoadedImagesMenu;
     
     oEnteredImageNameLabel = new Label();
-    oEnteredImageView      = new ImageView();
+    oImageView             = new ImageView();
     oImageNameTextField    = new TextField();
     oFileChooser           = new FileChooser();
   }
@@ -104,14 +106,14 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
     GridPane.setHalignment(oEnteredImageNameLabel, HPos.CENTER);
     GridPane.setHalignment(vChooseImageLabel,      HPos.CENTER);
     GridPane.setHalignment(vBrowseImagesButton,    HPos.CENTER);
-    GridPane.setHalignment(oEnteredImageView,      HPos.CENTER);
+    GridPane.setHalignment(oImageView,             HPos.CENTER);
     
     vChoicesGridPane.add(vEnterNameLabel, 0, 0);
     vChoicesGridPane.add(oImageNameTextField, 1, 0);
     vChoicesGridPane.add(oEnteredImageNameLabel, 2, 0);
     vChoicesGridPane.add(vChooseImageLabel, 0, 1);
     vChoicesGridPane.add(vBrowseImagesButton, 1, 1);
-    vChoicesGridPane.add(oEnteredImageView, 2, 1);
+    vChoicesGridPane.add(oImageView, 2, 1);
     vChoicesGridPane.setVgap(20.0);
     
     GridPane.setHalignment(vLoadButton, HPos.CENTER);
@@ -159,9 +161,25 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   }
   
   
+  private void displayAlert(
+      Alert.AlertType pAlertType, 
+      String pAlertTitle, 
+      String pAlertText)
+  {
+    Alert vAlert = null;
+    
+    vAlert = new Alert(pAlertType);
+    
+    vAlert.setTitle(pAlertTitle);
+    vAlert.setContentText(pAlertText);
+    vAlert.showAndWait();
+  }
+  
+  
   private void clearValues()
   {
-    oEnteredImageView.setImage(null);
+    oImage = null;
+    oImageView.setImage(null);
     oEnteredImageNameLabel.setText("");
     oImageNameTextField.setText("");
   }
@@ -178,18 +196,30 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   
   private class ImageNameTextFieldEnter implements EventHandler<KeyEvent>
   {
+    String vEnteredText = null;
+    Alert  vAlert       = null;
+    
     public void handle(KeyEvent pKeyEvent)
     {
       if(pKeyEvent.getCode() == KeyCode.ENTER)
       {
-        String vEnteredText = null;
-        
         vEnteredText = oImageNameTextField.getText().trim();
         
         if(vEnteredText.length() > 0)
         {
-          oEnteredImageNameLabel.setText(vEnteredText);
-          oImageNameTextField.setText("");
+          if(oLoadedImagesMenu.containsKey(vEnteredText) == false)
+          {
+            oImageNameTextField.setText("");
+            oEnteredImageNameLabel.setText(vEnteredText);
+          }
+          else
+          {
+            displayAlert(
+                Alert.AlertType.ERROR, 
+                "ERROR", 
+                "There is already a loaded image with name \"" + 
+                vEnteredText + "\"");
+          }
         }
       }
     }
@@ -203,32 +233,48 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
       File        vChoosenFile     = null;
       String      vChoosenFilePath = null;
       Node        vNode            = null;
-      Image       vImage           = null;
       
       try
       {
         vNode        = (Node) pMouseEvent.getSource();
-        
         vChoosenFile = oFileChooser.showOpenDialog(vNode.getScene().getWindow());
         
         if(vChoosenFile != null)
         {
           vChoosenFilePath = vChoosenFile.getAbsolutePath();
           
-          vImage = new Image(
+          oImage = new Image(
               new FileInputStream(vChoosenFilePath),
               TileEditor.TILE_LENGTH,
               TileEditor.TILE_LENGTH,
               true,
               true);
           
-          oEnteredImageView.setImage(vImage);
+          if(oImage.isError())
+          {
+            oImage = null;
+          }
+          else
+          {
+            oImageView.setImage(oImage);
+          }
         }
        
       }
       catch(FileNotFoundException pFileNotFoundException)
       {
-        System.out.println("Unable to load image - " + pFileNotFoundException.getMessage());
+        System.out.println("LoadImagesHandler.BrowseImageButtonClick - " + 
+                            pFileNotFoundException.getMessage());
+      }
+      catch(IllegalArgumentException pIllegalArgumentException)
+      {
+        System.out.println("LoadImagesHandler.BrowseImageButtonClick - " + 
+                            pIllegalArgumentException.getMessage());
+      }
+      catch(NullPointerException pNullPointerException)
+      {
+        System.out.println("LoadImagesHandler.BrowseImageButtonClick - " + 
+                            pNullPointerException.getMessage());
       }
     }
   }//End BrowseImageButtonClick class
@@ -246,15 +292,26 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
       
       if(vImageNameLabelText != null && vImageNameLabelText.length() > 0)
       {
-        oLoadedImagesMenu.addRow(vImageNameLabelText, oEnteredImageView);
+        oLoadedImagesMenu.addRow(vImageNameLabelText, oImage);
         clearValues();
         oStage.close();
       }
       else if(vImageNameTextFieldText != null && vImageNameTextFieldText.length() > 0)
       {
-        oLoadedImagesMenu.addRow(vImageNameTextFieldText, oEnteredImageView);
-        clearValues();
-        oStage.close();
+        if(oLoadedImagesMenu.containsKey(vImageNameTextFieldText) == false)
+        {
+          oLoadedImagesMenu.addRow(vImageNameTextFieldText, oImage);
+          clearValues();
+          oStage.close();
+        }
+        else
+        {
+          displayAlert(
+              Alert.AlertType.ERROR, 
+              "ERROR", 
+              "There is already a loaded image with name \"" + 
+               vImageNameTextFieldText + "\"");
+        }
       }
     }
   }//End LoadButtonClick class

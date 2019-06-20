@@ -1,12 +1,16 @@
 package com.game.TileEditor;
 
+import java.util.HashMap;
+
 import com.game.EventHandlers.LoadImagesHandler;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -24,7 +28,8 @@ public class LoadedImagesMenu extends BorderPane
   private static final double BUTTON_HEIGHT          = 20.0;
   private static final double BUTTON_WIDTH           = 80.0;
   
-  private GridPane oNameImageGridPane = null;
+  private GridPane               oNameImageGridPane = null;
+  private HashMap<String, Image> oImages            = null;
   
   private int oRowCount = 0;
   
@@ -35,6 +40,7 @@ public class LoadedImagesMenu extends BorderPane
     ScrollPane vNameImageScrollPane = null;
     
     vNameImageScrollPane = new ScrollPane();
+    oImages              = new HashMap<String, Image>();
     
     setPrefHeight(HEIGHT);
     setPrefWidth(WIDTH);
@@ -75,7 +81,7 @@ public class LoadedImagesMenu extends BorderPane
   }
   
   
-  public void addRow(String pImageName, ImageView pImageView)
+  public void addRow(String pImageName, Image pImage)
   {
     StackPane vStackPaneName  = null;
     StackPane vStackPaneImage = null;
@@ -84,6 +90,9 @@ public class LoadedImagesMenu extends BorderPane
     {
       vStackPaneName  = new StackPane();
       vStackPaneImage = new StackPane();
+      
+      vStackPaneName.setPadding(new Insets(1,0,1,0));
+      vStackPaneImage.setPadding(new Insets(1,0,1,0));
       
       if(oRowCount % 2 == 0)
       {
@@ -97,10 +106,12 @@ public class LoadedImagesMenu extends BorderPane
       }
       
       vStackPaneName.getChildren().add(new Label(pImageName));
-      vStackPaneImage.getChildren().add(pImageView == null ? new Label("No Image") : new ImageView(pImageView.getImage()));
+      vStackPaneImage.getChildren().add(new ImageView(pImage));
       
       oNameImageGridPane.add(vStackPaneName, 0, oRowCount);
       oNameImageGridPane.add(vStackPaneImage, 1, oRowCount);
+      
+      oImages.put(pImageName, pImage);
       
       ++oRowCount;
     }
@@ -108,7 +119,18 @@ public class LoadedImagesMenu extends BorderPane
     {
       e.printStackTrace();
     }
-   
+  }
+  
+  
+  public Image getImage(String pImageName)
+  {
+    return oImages.get(pImageName);
+  }
+  
+  
+  public boolean containsKey(String pImageName)
+  {
+    return oImages.containsKey(pImageName);
   }
   
   
