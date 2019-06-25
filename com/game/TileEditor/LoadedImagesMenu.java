@@ -3,6 +3,7 @@ package com.game.TileEditor;
 import java.util.HashMap;
 
 import com.game.EventHandlers.LoadImagesHandler;
+import com.game.Utilities.SceneUtils;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -75,7 +76,7 @@ public class LoadedImagesMenu extends BorderPane
     
     vGridPane = new GridPane();
     
-    setColumnConstraints(vGridPane);
+    SceneUtils.setColumnConstraints(vGridPane, 2);
     
     return vGridPane;
   }
@@ -156,8 +157,8 @@ public class LoadedImagesMenu extends BorderPane
     GridPane.setValignment(vAddButton, VPos.CENTER);
     GridPane.setValignment(vDeleteButton, VPos.CENTER);
     
-    setColumnConstraints(vGridPane);
-    setRowConstraints(vGridPane);
+    SceneUtils.setColumnConstraints(vGridPane, 2);
+    SceneUtils.setRowConstraints(vGridPane, 1);
     
     vAddButton.setPrefHeight(BUTTON_HEIGHT);
     vAddButton.setPrefWidth(BUTTON_WIDTH);
@@ -171,31 +172,5 @@ public class LoadedImagesMenu extends BorderPane
     
     return vGridPane;
   }
-  
-  
-  private void setColumnConstraints(GridPane pGridPane)
-  {
-    ColumnConstraints vColumn1 = null;
-    ColumnConstraints vColumn2 = null;
-    
-    vColumn1 = new ColumnConstraints();
-    vColumn2 = new ColumnConstraints();
-    
-    vColumn1.setPercentWidth(50);
-    vColumn2.setPercentWidth(50);
-    pGridPane.getColumnConstraints().addAll(vColumn1, vColumn2);
-  }
-  
-  
-  private void setRowConstraints(GridPane pGridPane)
-  {
-    RowConstraints vRow1 = null;
-    
-    vRow1 = new RowConstraints();
-    
-    vRow1.setPercentHeight(100);
-    
-    pGridPane.getRowConstraints().addAll(vRow1);
-  }  
   
 }

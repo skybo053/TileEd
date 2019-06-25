@@ -1,6 +1,8 @@
 package com.game.TileEditor;
 
 
+import com.game.Utilities.SceneUtils;
+
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -23,9 +25,6 @@ import javafx.stage.Stage;
 
 public class TileEditableMenu extends GridPane
 {
-  private static final int LABEL     = 0;
-  private static final int TEXTFIELD = 1;
-  
   private Label     oIsSolidLabel    = null;
   private Label     oImageViewLabel  = null;
   private Label     oTileEventsLabel = null;
@@ -90,8 +89,9 @@ public class TileEditableMenu extends GridPane
     
     oEditableImage = new ImageView();
     
+    SceneUtils.setColumnConstraints(this, 2);
+    
     initializeLoadedImagesMenuStage();
-    setColumnConstraints();
     setBaseRowStyles();
     placeLabelsInPanes();
     placePanesInGridPane();
@@ -125,20 +125,6 @@ public class TileEditableMenu extends GridPane
     setBaseRowStyles();
     
     oSelectedEditableRowIndex = null;
-  }
-  
-  
-  private void setColumnConstraints()
-  {
-    ColumnConstraints vColumn1 = null;
-    ColumnConstraints vColumn2 = null;
-    
-    vColumn1 = new ColumnConstraints();
-    vColumn2 = new ColumnConstraints();
-    
-    vColumn1.setPercentWidth(50);
-    vColumn2.setPercentWidth(50);
-    getColumnConstraints().addAll(vColumn1, vColumn2);
   }
   
   

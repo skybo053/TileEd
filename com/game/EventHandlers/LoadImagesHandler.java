@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 
 import com.game.TileEditor.LoadedImagesMenu;
 import com.game.TileEditor.TileEditor;
+import com.game.Utilities.SceneUtils;
 
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -22,9 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -99,7 +98,7 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
     oImageNameTextField.setPrefWidth(20.0);
     oImageNameTextField.setOnKeyPressed(new ImageNameTextFieldEnter());
     
-    setColumnConstraints(vChoicesGridPane, 3);
+    SceneUtils.setColumnConstraints(vChoicesGridPane, 3);
     
     GridPane.setHalignment(vEnterNameLabel,        HPos.CENTER);
     GridPane.setHalignment(oImageNameTextField,    HPos.CENTER);
@@ -119,8 +118,8 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
     GridPane.setHalignment(vLoadButton, HPos.CENTER);
     GridPane.setValignment(vLoadButton, VPos.CENTER);
 
-    setColumnConstraints(vLoadButtonGridPane, 1);
-    setRowConstraint(vLoadButtonGridPane);
+    SceneUtils.setColumnConstraints(vLoadButtonGridPane, 1);
+    SceneUtils.setRowConstraints(vLoadButtonGridPane, 1);
     
     vLoadButtonGridPane.setPrefHeight(50.0);
     vLoadButtonGridPane.add(vLoadButton, 0, 0);
@@ -129,50 +128,6 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
     vBorderPane.setBottom(vLoadButtonGridPane);
     
     return new Scene(vBorderPane);
-  }
-  
-  
-  private void setColumnConstraints(GridPane pGridPane, int pNumColumns)
-  {
-    ColumnConstraints vColumnConstraints  = null;
-    double            vPercentColumnWidth = 0.0;
-    
-    vPercentColumnWidth = 100.0 / pNumColumns;
-    
-    for(int i = 0; i < pNumColumns; ++i)
-    {
-      vColumnConstraints = new ColumnConstraints();
-      vColumnConstraints.setPercentWidth(vPercentColumnWidth);
-      
-      pGridPane.getColumnConstraints().add(vColumnConstraints);
-    }
-  }
-  
-  
-  private void setRowConstraint(GridPane pGridPane)
-  {
-    RowConstraints vRow1 = null;
-      
-    vRow1 = new RowConstraints();
-    
-    vRow1.setPercentHeight(100);
-    
-    pGridPane.getRowConstraints().addAll(vRow1);
-  }
-  
-  
-  private void displayAlert(
-      Alert.AlertType pAlertType, 
-      String pAlertTitle, 
-      String pAlertText)
-  {
-    Alert vAlert = null;
-    
-    vAlert = new Alert(pAlertType);
-    
-    vAlert.setTitle(pAlertTitle);
-    vAlert.setContentText(pAlertText);
-    vAlert.showAndWait();
   }
   
   
@@ -197,7 +152,6 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   private class ImageNameTextFieldEnter implements EventHandler<KeyEvent>
   {
     String vEnteredText = null;
-    Alert  vAlert       = null;
     
     public void handle(KeyEvent pKeyEvent)
     {
@@ -214,7 +168,7 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
           }
           else
           {
-            displayAlert(
+            SceneUtils.displayAlert(
                 Alert.AlertType.ERROR, 
                 "ERROR", 
                 "There is already a loaded image with name \"" + 
@@ -312,7 +266,7 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
         }
         else
         {
-          displayAlert(
+          SceneUtils.displayAlert(
               Alert.AlertType.ERROR, 
               "ERROR", 
               "There is already a loaded image with name \"" + 
