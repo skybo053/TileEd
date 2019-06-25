@@ -230,9 +230,11 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   {
     public void handle(MouseEvent pMouseEvent)
     {
-      File        vChoosenFile     = null;
-      String      vChoosenFilePath = null;
-      Node        vNode            = null;
+      File   vChoosenFile     = null;
+      String vChoosenFilePath = null;
+      String vDirectoryName   = null;
+      Node   vNode            = null;
+      int    vIndex           = -1;
       
       try
       {
@@ -258,8 +260,12 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
           {
             oImageView.setImage(oImage);
           }
+          
+          vIndex         = vChoosenFilePath.lastIndexOf("\\");
+          vDirectoryName = vChoosenFilePath.substring(0, vIndex);
+          
+          oFileChooser.setInitialDirectory(new File(vDirectoryName));
         }
-       
       }
       catch(FileNotFoundException pFileNotFoundException)
       {

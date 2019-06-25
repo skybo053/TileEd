@@ -106,7 +106,11 @@ public class LoadedImagesMenu extends BorderPane
       }
       
       vStackPaneName.getChildren().add(new Label(pImageName));
-      vStackPaneImage.getChildren().add(new ImageView(pImage));
+      
+      if(pImage != null)
+      {
+        vStackPaneImage.getChildren().add(new ImageView(pImage));
+      }
       
       oNameImageGridPane.add(vStackPaneName, 0, oRowCount);
       oNameImageGridPane.add(vStackPaneImage, 1, oRowCount);
