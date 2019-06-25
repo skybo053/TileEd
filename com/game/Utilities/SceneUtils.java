@@ -1,9 +1,12 @@
 package com.game.Utilities;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 
 public class SceneUtils 
 {
@@ -38,6 +41,39 @@ public class SceneUtils
       
       pGridPane.getRowConstraints().add(vRowConstraints);
     }
+  }
+  
+  
+  public static boolean paneContainsNode(StackPane pStackPane, Node pNode)
+  {
+    ObservableList<Node> vNodes = null;
+    
+    vNodes = pStackPane.getChildren();
+    
+    if(vNodes.size() == 0)
+    {
+      return false;
+    }
+    else if(vNodes.get(0) == pNode)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  
+  public static void clearPane(StackPane pStackPane)
+  {
+    pStackPane.getChildren().clear();
+  }
+  
+  
+  public static void addToPane(StackPane pStackPane, Node pNode)
+  {
+    pStackPane.getChildren().add(pNode);
   }
   
   

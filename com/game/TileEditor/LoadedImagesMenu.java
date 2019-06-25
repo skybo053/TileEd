@@ -1,6 +1,7 @@
 package com.game.TileEditor;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import com.game.EventHandlers.LoadImagesHandler;
 import com.game.Utilities.SceneUtils;
@@ -14,9 +15,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 
 
@@ -30,7 +29,7 @@ public class LoadedImagesMenu extends BorderPane
   private static final double BUTTON_WIDTH           = 80.0;
   
   private GridPane               oNameImageGridPane = null;
-  private HashMap<String, Image> oImages            = null;
+  private TreeMap<String, Image> oImageMap          = null;
   
   private int oRowCount = 0;
   
@@ -41,7 +40,7 @@ public class LoadedImagesMenu extends BorderPane
     ScrollPane vNameImageScrollPane = null;
     
     vNameImageScrollPane = new ScrollPane();
-    oImages              = new HashMap<String, Image>();
+    oImageMap            = new TreeMap<String, Image>();
     
     setPrefHeight(HEIGHT);
     setPrefWidth(WIDTH);
@@ -106,17 +105,17 @@ public class LoadedImagesMenu extends BorderPane
         vStackPaneImage.setStyle("-fx-background-color: white;");
       }
       
-      vStackPaneName.getChildren().add(new Label(pImageName));
+      SceneUtils.addToPane(vStackPaneName, new Label(pImageName));
       
       if(pImage != null)
       {
-        vStackPaneImage.getChildren().add(new ImageView(pImage));
+        SceneUtils.addToPane(vStackPaneImage, new ImageView(pImage));
       }
       
       oNameImageGridPane.add(vStackPaneName, 0, oRowCount);
       oNameImageGridPane.add(vStackPaneImage, 1, oRowCount);
       
-      oImages.put(pImageName, pImage);
+      oImageMap.put(pImageName, pImage);
       
       ++oRowCount;
     }
@@ -129,13 +128,13 @@ public class LoadedImagesMenu extends BorderPane
   
   public Image getImage(String pImageName)
   {
-    return oImages.get(pImageName);
+    return oImageMap.get(pImageName);
   }
   
   
   public boolean containsKey(String pImageName)
   {
-    return oImages.containsKey(pImageName);
+    return oImageMap.containsKey(pImageName);
   }
   
   

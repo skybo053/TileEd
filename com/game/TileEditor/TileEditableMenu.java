@@ -115,12 +115,12 @@ public class TileEditableMenu extends GridPane
     oIsSolid.setText(null);
     oTileEvents.setText(null);
     
-    clearPane(oIsSolidStackPane);
-    clearPane(oImageViewStackPane);
-    clearPane(oTileEventsStackPane);
+    SceneUtils.clearPane(oIsSolidStackPane);
+    SceneUtils.clearPane(oImageViewStackPane);
+    SceneUtils.clearPane(oTileEventsStackPane);
     
-    addToPane(oIsSolidStackPane, oIsSolid);
-    addToPane(oTileEventsStackPane, oTileEvents);
+    SceneUtils.addToPane(oIsSolidStackPane,    oIsSolid);
+    SceneUtils.addToPane(oTileEventsStackPane, oTileEvents);
     
     setBaseRowStyles();
     
@@ -152,10 +152,10 @@ public class TileEditableMenu extends GridPane
         oImageViewLabelStackPane.setStyle("-fx-background-color: #87ceeb;");
         oImageViewStackPane.setStyle("-fx-background-color: #87ceeb;");
         
-        if(paneContainsNode(oIsSolidStackPane, oIsSolidTextField))
+        if(SceneUtils.paneContainsNode(oIsSolidStackPane, oIsSolidTextField))
         {
-          clearPane(oIsSolidStackPane);
-          addToPane(oIsSolidStackPane, oIsSolid);
+          SceneUtils.clearPane(oIsSolidStackPane);
+          SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
         }
         
         break;
@@ -164,10 +164,10 @@ public class TileEditableMenu extends GridPane
         oTileEventsLabelStackPane.setStyle("-fx-background-color: #87ceeb;");
         oTileEventsStackPane.setStyle("-fx-background-color: #87ceeb;");
         
-        if(paneContainsNode(oIsSolidStackPane, oIsSolidTextField))
+        if(SceneUtils.paneContainsNode(oIsSolidStackPane, oIsSolidTextField))
         {
-          clearPane(oIsSolidStackPane);
-          addToPane(oIsSolidStackPane, oIsSolid);
+          SceneUtils.clearPane(oIsSolidStackPane);
+          SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
         }
         
         break;
@@ -188,12 +188,12 @@ public class TileEditableMenu extends GridPane
   
   private void placeLabelsInPanes()
   {
-    addToPane(oIsSolidLabelStackPane,    oIsSolidLabel);
-    addToPane(oImageViewLabelStackPane,  oImageViewLabel);
-    addToPane(oTileEventsLabelStackPane, oTileEventsLabel);
-    addToPane(oIsSolidStackPane,         oIsSolid);
-    addToPane(oImageViewStackPane,       oImageView);
-    addToPane(oTileEventsStackPane,      oTileEvents);
+    SceneUtils.addToPane(oIsSolidLabelStackPane,    oIsSolidLabel);
+    SceneUtils.addToPane(oImageViewLabelStackPane,  oImageViewLabel);
+    SceneUtils.addToPane(oTileEventsLabelStackPane, oTileEventsLabel);
+    SceneUtils.addToPane(oIsSolidStackPane,         oIsSolid);
+    SceneUtils.addToPane(oImageViewStackPane,       oImageView);
+    SceneUtils.addToPane(oTileEventsStackPane,      oTileEvents);
   }
   
   
@@ -218,17 +218,17 @@ public class TileEditableMenu extends GridPane
   
   public void setImageView(Image pImage)
   {
-    clearPane(oImageViewStackPane);
+    SceneUtils.clearPane(oImageViewStackPane);
  
     if(pImage == null)
     {
       oImageView.setText("No Image");
-      addToPane(oImageViewStackPane, oImageView);
+      SceneUtils.addToPane(oImageViewStackPane, oImageView);
     }
     else
     {
       oEditableImage.setImage(pImage);
-      addToPane(oImageViewStackPane, oEditableImage);
+      SceneUtils.addToPane(oImageViewStackPane, oEditableImage);
     }
   }
   
@@ -242,39 +242,6 @@ public class TileEditableMenu extends GridPane
   public void setCurrentTile(Tile pTile)
   {
     oCurrentTile = pTile;
-  }
- 
-  
-  private boolean paneContainsNode(StackPane pStackPane, Node pNode)
-  {
-    ObservableList<Node> vNodes = null;
-    
-    vNodes = pStackPane.getChildren();
-    
-    if(vNodes.size() == 0)
-    {
-      return false;
-    }
-    else if(vNodes.get(0) == pNode)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-  
-  
-  private void clearPane(StackPane pStackPane)
-  {
-    pStackPane.getChildren().clear();
-  }
-  
-  
-  private void addToPane(StackPane pStackPane, Node pNode)
-  {
-    pStackPane.getChildren().add(pNode);
   }
   
   
@@ -319,8 +286,8 @@ public class TileEditableMenu extends GridPane
     {
       oIsSolidTextField.setText(oIsSolid.getText());
       
-      clearPane(oIsSolidStackPane);
-      addToPane(oIsSolidStackPane, oIsSolidTextField);
+      SceneUtils.clearPane(oIsSolidStackPane);
+      SceneUtils.addToPane(oIsSolidStackPane, oIsSolidTextField);
     }
   } //End of EditableMenuClickHandler class
   
@@ -346,8 +313,8 @@ public class TileEditableMenu extends GridPane
           oSideTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
         }
         
-        clearPane(oIsSolidStackPane);
-        addToPane(oIsSolidStackPane, oIsSolid);
+        SceneUtils.clearPane(oIsSolidStackPane);
+        SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
       }
     }
   } //End of IsSolidTextFieldHandler class
