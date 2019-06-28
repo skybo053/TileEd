@@ -1,11 +1,11 @@
 package com.game.TileEditor;
 
 import java.util.HashMap;
-import java.util.TreeMap;
 
 import com.game.EventHandlers.LoadImagesHandler;
 import com.game.Utilities.SceneUtils;
 
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -28,19 +29,27 @@ public class LoadedImagesMenu extends BorderPane
   private static final double BUTTON_HEIGHT          = 20.0;
   private static final double BUTTON_WIDTH           = 80.0;
   
-  private GridPane               oNameImageGridPane = null;
-  private TreeMap<String, Image> oImageMap          = null;
+  private GridPane                                    oNameImageGridPane = null;
+  private HashMap<String, Image>                      oNameImageMap      = null;
+  private HashMap<Integer, LoadedImagesMenu.RowPanes> oRowPanesMap       = null;
   
-  private int oRowCount = 0;
+  private int      oRowCount            = 0;
+  private RowPanes oPreviousSelectedRow = null;
+  private RowPanes oCurrentSelectedRow  = null;
+  
+  private TileEditor oTileEditor = null;
   
   
-  public LoadedImagesMenu()
+  public LoadedImagesMenu(TileEditor pTileEditor)
   {
     GridPane   vButtonGridPane      = null;
     ScrollPane vNameImageScrollPane = null;
     
+    oTileEditor          = pTileEditor;
+    
     vNameImageScrollPane = new ScrollPane();
-    oImageMap            = new TreeMap<String, Image>();
+    oNameImageMap        = new HashMap<String, Image>();
+    oRowPanesMap         = new HashMap<Integer, LoadedImagesMenu.RowPanes>();
     
     setPrefHeight(HEIGHT);
     setPrefWidth(WIDTH);
@@ -83,16 +92,21 @@ public class LoadedImagesMenu extends BorderPane
   
   public void addRow(String pImageName, Image pImage)
   {
-    StackPane vStackPaneName  = null;
-    StackPane vStackPaneImage = null;
+    StackPane                 vStackPaneName  = null;
+    StackPane                 vStackPaneImage = null;
+    LoadedImagesMenu.RowPanes vRowPanes       = null;
     
     try
     {
       vStackPaneName  = new StackPane();
       vStackPaneImage = new StackPane();
+      vRowPanes       = new LoadedImagesMenu.RowPanes();
       
       vStackPaneName.setPadding(new Insets(1,0,1,0));
       vStackPaneImage.setPadding(new Insets(1,0,1,0));
+      
+      vStackPaneName.setOnMouseClicked(new LoadedImagesMenuRowSelect());
+      vStackPaneImage.setOnMouseClicked(new LoadedImagesMenuRowSelect());
       
       if(oRowCount % 2 == 0)
       {
@@ -105,6 +119,10 @@ public class LoadedImagesMenu extends BorderPane
         vStackPaneImage.setStyle("-fx-background-color: white;");
       }
       
+      vRowPanes.setNamePane(vStackPaneName);
+      vRowPanes.setImagePane(vStackPaneImage);
+      vRowPanes.setRowBaseStyle(vStackPaneName.getStyle());
+      
       SceneUtils.addToPane(vStackPaneName, new Label(pImageName));
       
       if(pImage != null)
@@ -115,7 +133,8 @@ public class LoadedImagesMenu extends BorderPane
       oNameImageGridPane.add(vStackPaneName, 0, oRowCount);
       oNameImageGridPane.add(vStackPaneImage, 1, oRowCount);
       
-      oImageMap.put(pImageName, pImage);
+      oNameImageMap.put(pImageName, pImage);
+      oRowPanesMap.put(oRowCount, vRowPanes);
       
       ++oRowCount;
     }
@@ -128,13 +147,25 @@ public class LoadedImagesMenu extends BorderPane
   
   public Image getImage(String pImageName)
   {
-    return oImageMap.get(pImageName);
+    return oNameImageMap.get(pImageName);
   }
   
   
   public boolean containsKey(String pImageName)
   {
-    return oImageMap.containsKey(pImageName);
+    return oNameImageMap.containsKey(pImageName);
+  }
+  
+ 
+  public void clearSelectedRow()
+  {
+    if(oCurrentSelectedRow != null)
+    {
+      oCurrentSelectedRow.unselectRow();
+    }
+    
+    oCurrentSelectedRow  = null;
+    oPreviousSelectedRow = null;
   }
   
   
@@ -168,8 +199,128 @@ public class LoadedImagesMenu extends BorderPane
     
     vGridPane.add(vAddButton, 0, 0);
     vGridPane.add(vDeleteButton, 1, 0);
-    
+
     return vGridPane;
+  }
+  
+  
+  private class LoadedImagesMenuRowSelect implements EventHandler<MouseEvent>
+  {
+    public void handle(MouseEvent pMouseEvent)
+    {
+      StackPane vClickedStackPane = null;
+      int       vClickedRowIndex  = -1;
+      
+      vClickedStackPane = (StackPane)pMouseEvent.getSource();
+      vClickedRowIndex  = GridPane.getRowIndex(vClickedStackPane);
+      
+      oPreviousSelectedRow = oCurrentSelectedRow;
+      oCurrentSelectedRow  = oRowPanesMap.get(vClickedRowIndex);
+      
+      if(oPreviousSelectedRow != null)
+      {
+        oPreviousSelectedRow.unselectRow();
+      }
+      
+      oCurrentSelectedRow.selectRow("-fx-background-color: #87ceeb");
+      
+      if(pMouseEvent.getClickCount() == 2)
+      {
+        oTileEditor.setImageViewReferences(
+            oCurrentSelectedRow.getImageName(), 
+            oCurrentSelectedRow.getImage());
+        
+        clearSelectedRow();
+        
+        oTileEditor.closeLoadedImagesMenu();
+        
+      }
+    }
+  }
+  
+  
+  private class RowPanes
+  {
+    StackPane oNamePane     = null;
+    StackPane oImagePane    = null;
+    String    oBaseRowStyle = null;
+    
+    private RowPanes()
+    {
+      
+    }
+    
+    
+    private void setNamePane(StackPane pNamePane)
+    {
+      oNamePane = pNamePane;
+    }
+    
+    
+    private StackPane getNamePane()
+    {
+      return oNamePane;
+    }
+    
+    
+    private void setImagePane(StackPane pImagePane)
+    {
+      oImagePane = pImagePane;
+    }
+    
+    
+    private StackPane getImagePane()
+    {
+      return oImagePane;
+    }
+    
+    
+    private void setRowBaseStyle(String pBaseRowStyle)
+    {
+      oBaseRowStyle = pBaseRowStyle;
+    }
+    
+    
+    private String getRowBaseStyle()
+    {
+      return oBaseRowStyle;
+    }
+    
+    
+    private void unselectRow()
+    {
+      oNamePane.setStyle(oBaseRowStyle);
+      oImagePane.setStyle(oBaseRowStyle);
+    }
+    
+    
+    private void selectRow(String pSelectedRowStyle)
+    {
+      oNamePane.setStyle(pSelectedRowStyle);
+      oImagePane.setStyle(pSelectedRowStyle);
+    }
+    
+    
+    private Image getImage()
+    {
+      ImageView vImageView = null;
+      
+      vImageView = (ImageView)oImagePane.getChildren().get(0);
+      
+      return vImageView.getImage();
+    }
+    
+    
+    private String getImageName()
+    {
+      Label vNameLabel = null;
+      
+      vNameLabel = (Label)oNamePane.getChildren().get(0);
+      
+      return vNameLabel.getText();
+    }
+    
+    
   }
   
 }

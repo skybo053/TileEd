@@ -15,10 +15,12 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -32,9 +34,7 @@ public class TileEditor extends Application
   private static final double SCENE_WIDTH        = 1000.0;
   private static final double SCENE_HEIGHT       = 800.0;
   private static final double SIDE_PANE_WIDTH    = 200.0;
-  
-  public  static final int    TILE_LENGTH        = 45;
-  
+  public  static final int    TILE_LENGTH        = 35;
   
   private Scene            oScene                     = null;
   private MenuBar          oMenuBar                   = null;
@@ -48,6 +48,8 @@ public class TileEditor extends Application
   private TitledPane       oTileAttribsTitledPane     = null;
   private TitledPane       oEditTileAttribsTitledPane = null;
   private Scene            oLoadedImagesMenuScene     = null;
+  private LoadedImagesMenu oLoadedImagesMenu          = null;
+  private Stage            oLoadedImagesMenuStage     = null;
   
   private Tile oCurrentTile  = null;
   private Tile oPreviousTile = null;
@@ -75,24 +77,53 @@ public class TileEditor extends Application
 
   private void initialize()
   {
-    oLoadedImagesMenuScene     = new Scene(new LoadedImagesMenu());
+    oLoadedImagesMenuStage     = new Stage();
+    oLoadedImagesMenu          = new LoadedImagesMenu(this);
+    oLoadedImagesMenuScene     = new Scene(oLoadedImagesMenu);
     oMainBorderPane            = new BorderPane();
     oMenuBar                   = new MenuBar();
     oFileMenu                  = new Menu("File");
     oMainGridPane              = new GridPane();
     oMainScrollPane            = new ScrollPane();
     oSideTileMenu              = new TileMenu();
-    oSideEditableTileMenu      = new TileEditableMenu(oSideTileMenu, oLoadedImagesMenuScene);
+    oSideEditableTileMenu      = new TileEditableMenu(this);
     oSideFlowPane              = new FlowPane();
     oTileAttribsTitledPane     = new TitledPane();
     oEditTileAttribsTitledPane = new TitledPane();
     
     buildMenu();
+    configureLoadedImagesMenuStage();
     configureMainBorderPane();
     configureMainGridPane();
     configureSideFlowPane();
     configureTileAttribTitlePane();
     configureEditTileAttribsTitlePane();
+  }
+  
+  
+  private void configureLoadedImagesMenuStage()
+  {
+    oLoadedImagesMenuStage.setTitle("Loaded Images");
+    oLoadedImagesMenuStage.setScene(oLoadedImagesMenuScene);
+    oLoadedImagesMenuStage.setResizable(false);
+    oLoadedImagesMenuStage.initModality(Modality.APPLICATION_MODAL);
+    
+    oLoadedImagesMenuStage.setOnCloseRequest(pWindowEvent->
+    {
+      clearLoadedImagesMenuSelectedRow();
+    });
+  }
+  
+  
+  public void closeLoadedImagesMenu()
+  {
+    oLoadedImagesMenuStage.close();
+  }
+  
+  
+  public void showLoadedImagesMenu()
+  {
+    oLoadedImagesMenuStage.show();
   }
   
   
@@ -187,6 +218,12 @@ public class TileEditor extends Application
   }
   
   
+  public void clearLoadedImagesMenuSelectedRow()
+  {
+    oLoadedImagesMenu.clearSelectedRow();
+  }
+  
+  
   private void configureMainBorderPane()
   {
     oMainBorderPane.setOnMouseClicked(pMouseEvent ->
@@ -199,7 +236,6 @@ public class TileEditor extends Application
         oSideEditableTileMenu.clearAttributeValues();
         
         oCurrentTile = null;
-        oSideEditableTileMenu.setCurrentTile(null);
       }
     });
   }
@@ -225,7 +261,7 @@ public class TileEditor extends Application
           35,
           true,
           "file:Resources/Images/water.png",
-          TileImageType.WATER);
+          "water");
       
       vTile.setOnMouseClicked(new TileClickHandler());
       
@@ -236,7 +272,7 @@ public class TileEditor extends Application
           35,
           false,
           "file:Resources/Images/dirt.png",
-          TileImageType.DIRT);
+          "dirt");
       
       vTile.setOnMouseClicked(new TileClickHandler());
       
@@ -301,7 +337,30 @@ public class TileEditor extends Application
     oSideEditableTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
     oSideEditableTileMenu.setImageView(oCurrentTile.getTileImage());
   }
+  
+  
+  public Tile getCurrentTile()
+  {
+    return oCurrentTile;
+  }
+  
+  
+  public void setIsSolidReferences(Boolean pIsSolid)
+  {
+    oCurrentTile.setIsSolid(pIsSolid);
+
+    oSideTileMenu.setIsSolid(pIsSolid.toString());
+  }
  
+  
+  public void setImageViewReferences(String pTileImageName, Image pImage)
+  {
+    oCurrentTile.setTileImageName(pTileImageName);
+    oCurrentTile.setTileImage(pImage);
+
+    oSideTileMenu.setImage(pTileImageName);
+    oSideEditableTileMenu.setImageView(pImage);
+  }
   
   //Tile Handler class
   private class TileClickHandler implements EventHandler<MouseEvent>
@@ -310,7 +369,6 @@ public class TileEditor extends Application
     {
       oCurrentTile = (Tile)pMouseEvent.getSource();
       
-      oSideEditableTileMenu.setCurrentTile(oCurrentTile);
       oSideEditableTileMenu.clearAttributeValues();
       
       if(oPreviousTile != null)

@@ -42,22 +42,16 @@ public class TileEditableMenu extends GridPane
   private StackPane oTileEventsStackPane = null;
   
   private TextField oIsSolidTextField    = null;
-  
   private ImageView oEditableImage       = null;
   
-  private Tile     oCurrentTile              = null;
-  private TileMenu oSideTileMenu             = null;
+  private TileEditor oTileEditor               = null;
   
-  private Scene    oLoadedImagesMenuScene    = null;
-  private Stage    oLoadedImagesMenuStage    = null;
-  
-  private Integer  oSelectedEditableRowIndex = null;
+  private Integer    oSelectedEditableRowIndex = null;
   
   
-  public TileEditableMenu(TileMenu pSideTileMenu, Scene pLoadedImagesMenuScene)
+  public TileEditableMenu(TileEditor pTileEditor)
   {
-    oSideTileMenu          = pSideTileMenu;
-    oLoadedImagesMenuScene = pLoadedImagesMenuScene;
+    oTileEditor            = pTileEditor;
 
     oIsSolidLabel    = new Label("IsSolid: ");
     oImageViewLabel  = new Label("Image: ");
@@ -91,22 +85,10 @@ public class TileEditableMenu extends GridPane
     
     SceneUtils.setColumnConstraints(this, 2);
     
-    initializeLoadedImagesMenuStage();
     setBaseRowStyles();
     placeLabelsInPanes();
     placePanesInGridPane();
     setHandlers();
-  }
-  
-  
-  private void initializeLoadedImagesMenuStage()
-  {
-    oLoadedImagesMenuStage = new Stage();
-    
-    oLoadedImagesMenuStage.setTitle("Loaded Images");
-    oLoadedImagesMenuStage.setScene(oLoadedImagesMenuScene);
-    oLoadedImagesMenuStage.setResizable(false);
-    oLoadedImagesMenuStage.initModality(Modality.APPLICATION_MODAL);
   }
   
   
@@ -238,13 +220,6 @@ public class TileEditableMenu extends GridPane
     oTileEvents.setText(pTileEvents);
   }
   
-  
-  public void setCurrentTile(Tile pTile)
-  {
-    oCurrentTile = pTile;
-  }
-  
-  
   /////// Inner class to handle edit menu clicks ////////
   private class EditableMenuClickHandler implements EventHandler<MouseEvent>
   {
@@ -256,7 +231,7 @@ public class TileEditableMenu extends GridPane
       vClickedPane     = (StackPane)pMouseEvent.getSource();
       vClickedRowIndex = GridPane.getRowIndex(vClickedPane);
       
-      if(oCurrentTile != null)
+      if(oTileEditor.getCurrentTile() != null)
       {
         if(oSelectedEditableRowIndex == null ||
            vClickedRowIndex          != oSelectedEditableRowIndex)
@@ -275,7 +250,7 @@ public class TileEditableMenu extends GridPane
           }
           else if(GridPane.getRowIndex(vClickedPane) == 1)
           {
-            oLoadedImagesMenuStage.show();
+            oTileEditor.showLoadedImagesMenu();
           }
         }
       }
@@ -298,19 +273,23 @@ public class TileEditableMenu extends GridPane
   {
     public void handle(KeyEvent pKeyEvent) 
     {
-      String  vIsSolidEntry          = null;
+      String  vIsSolidEntry = null;
+      Boolean vIsSolid      = null;
       
       if(pKeyEvent.getCode() == KeyCode.ENTER) 
       {
         vIsSolidEntry = oIsSolidTextField.getText().toLowerCase();
         
-        if((vIsSolidEntry.equals("false")  == true  ||
-            vIsSolidEntry.equals("true")   == true) &&
-            Boolean.valueOf(vIsSolidEntry) != oCurrentTile.isSolid())
+        if(vIsSolidEntry.equals("false")  == true ||
+           vIsSolidEntry.equals("true")   == true)
         {
-          oCurrentTile.setIsSolid(Boolean.valueOf(vIsSolidEntry));
-          oIsSolid.setText(oCurrentTile.isSolid().toString());
-          oSideTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
+          vIsSolid = Boolean.valueOf(vIsSolidEntry);
+          
+          if(vIsSolid != oTileEditor.getCurrentTile().isSolid())
+          {
+            oIsSolid.setText(vIsSolid.toString());
+            oTileEditor.setIsSolidReferences(vIsSolid);
+          }
         }
         
         SceneUtils.clearPane(oIsSolidStackPane);

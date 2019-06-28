@@ -273,8 +273,16 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
                vImageNameTextFieldText + "\"");
         }
       }
+      else
+      {
+        SceneUtils.displayAlert(
+            Alert.AlertType.ERROR, 
+            "ERROR", 
+            "You must enter a name for your image");
+      }
     }
   }//End LoadButtonClick class
+  
   
   
 }//End LoadImagesHandler class

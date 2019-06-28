@@ -1,5 +1,7 @@
 package com.game.TileEditor;
 
+import com.game.Utilities.SceneUtils;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -12,15 +14,15 @@ public class Tile extends StackPane
   private Boolean       oIsSolid       = null;
   private Integer       oWidth         = null;
   private Integer       oHeight        = null;
-  private TileImageType oTileImageType = null;
-  
+  private String        oTileImageName = null;
   
   public Tile(int pWidth, int pHeight)
   {
     oWidth         = pWidth;
     oHeight        = pHeight;
-    oTileImageType = TileImageType.NOT_SET;
     oIsSolid       = false;
+    oTileImageName = "No Image";
+    oImageView     = new ImageView();
     
     setPrefWidth(oWidth);
     setPrefHeight(oHeight);
@@ -30,17 +32,17 @@ public class Tile extends StackPane
   
   
   public Tile(
-      int           pWidth, 
-      int           pHeight, 
-      Boolean       pIsSolid, 
-      String        pImagePath,
-      TileImageType pTileImageType)
+      int         pWidth, 
+      int         pHeight, 
+      Boolean     pIsSolid, 
+      String      pImagePath,
+      String      pTileImageName)
   {
     this(pWidth, pHeight);
     
     oImageView     = new ImageView();
     oIsSolid       = pIsSolid;
-    oTileImageType = pTileImageType;
+    oTileImageName = pTileImageName;
     
     setTileImage(pImagePath);
   }
@@ -59,7 +61,17 @@ public class Tile extends StackPane
     
     oImageView.setImage(vImage);
     
-    getChildren().add(oImageView);
+    SceneUtils.clearPane(this);
+    SceneUtils.addToPane(this, oImageView);
+  }
+  
+  
+  public void setTileImage(Image pImage)
+  {
+    oImageView.setImage(pImage);
+    
+    SceneUtils.clearPane(this);
+    SceneUtils.addToPane(this, oImageView);
   }
   
   
@@ -118,9 +130,15 @@ public class Tile extends StackPane
   }
   
   
+  public void setTileImageName(String pTileImageName)
+  {
+    oTileImageName = pTileImageName;
+  }
+  
+  
   public String getTileImageName()
   {
-    return oTileImageType.getDescription();
+    return oTileImageName;
   }
   
   
