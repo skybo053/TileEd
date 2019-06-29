@@ -176,7 +176,7 @@ public class LoadedImagesMenu extends BorderPane
     Button   vDeleteButton = null;
     
     vGridPane     = new GridPane();
-    vAddButton    = new Button("Add");
+    vAddButton    = new Button("Add Entry");
     vDeleteButton = new Button("Delete");
     
     vGridPane.setPrefHeight(BUTTON_GRIDPANE_HEIGHT);

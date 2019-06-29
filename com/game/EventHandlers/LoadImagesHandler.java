@@ -201,9 +201,9 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
           
           oImage = new Image(
               new FileInputStream(vChoosenFilePath),
-              TileEditor.TILE_LENGTH,
-              TileEditor.TILE_LENGTH,
-              true,
+              TileEditor.TILE_IMAGE_LENGTH,
+              TileEditor.TILE_IMAGE_LENGTH,
+              false,
               true);
           
           if(oImage.isError())

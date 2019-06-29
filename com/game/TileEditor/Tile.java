@@ -12,33 +12,27 @@ public class Tile extends StackPane
   
   private ImageView     oImageView     = null;
   private Boolean       oIsSolid       = null;
-  private Integer       oWidth         = null;
-  private Integer       oHeight        = null;
   private String        oTileImageName = null;
   
-  public Tile(int pWidth, int pHeight)
+  public Tile()
   {
-    oWidth         = pWidth;
-    oHeight        = pHeight;
     oIsSolid       = false;
     oTileImageName = "No Image";
     oImageView     = new ImageView();
     
-    setPrefWidth(oWidth);
-    setPrefHeight(oHeight);
+    setPrefWidth(TileEditor.TILE_PANE_LENGTH);
+    setPrefHeight(TileEditor.TILE_PANE_LENGTH);
     
     setTileStyle(STYLE_CLASS);
   }
   
   
-  public Tile(
-      int         pWidth, 
-      int         pHeight, 
+  public Tile( 
       Boolean     pIsSolid, 
       String      pImagePath,
       String      pTileImageName)
   {
-    this(pWidth, pHeight);
+    this();
     
     oImageView     = new ImageView();
     oIsSolid       = pIsSolid;
@@ -54,9 +48,9 @@ public class Tile extends StackPane
     
     vImage = new Image(
         pImagePath,
-        oWidth,
-        oHeight,
-        true,
+        TileEditor.TILE_IMAGE_LENGTH,
+        TileEditor.TILE_IMAGE_LENGTH,
+        false,
         true);
     
     oImageView.setImage(vImage);
@@ -106,29 +100,40 @@ public class Tile extends StackPane
   }
   
   
-  public void setTileWidth(Integer pWidth)
+  public double getTileWidth()
   {
-    oWidth = pWidth;
+    Image vImage = null;
+    
+    vImage = oImageView.getImage();
+    
+    if(vImage == null)
+    {
+      return getWidth();
+    }
+    else
+    {
+      return vImage.getWidth();
+    }
   }
   
   
-  public Integer getTileWidth()
+  public double getTileHeight()
   {
-    return oWidth;
+    Image vImage = null;
+    
+    vImage = oImageView.getImage();
+    
+    if(vImage == null)
+    {
+      return getHeight();
+    }
+    else
+    {
+      return vImage.getHeight();
+    }
   }
   
-  
-  public void setTileHeight(Integer pHeight)
-  {
-    oHeight = pHeight;
-  }
-  
-  
-  public Integer getTileHeight()
-  {
-    return oHeight;
-  }
-  
+
   
   public void setTileImageName(String pTileImageName)
   {

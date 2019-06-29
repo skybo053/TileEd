@@ -34,7 +34,8 @@ public class TileEditor extends Application
   private static final double SCENE_WIDTH        = 1000.0;
   private static final double SCENE_HEIGHT       = 800.0;
   private static final double SIDE_PANE_WIDTH    = 200.0;
-  public  static final int    TILE_LENGTH        = 35;
+  public  static final int    TILE_PANE_LENGTH   = 37;
+  public  static final int    TILE_IMAGE_LENGTH  = 35;
   
   private Scene            oScene                     = null;
   private MenuBar          oMenuBar                   = null;
@@ -194,7 +195,7 @@ public class TileEditor extends Application
       
       for(int vCurrentColumn = 0; vCurrentColumn < pTotalColumns; ++vCurrentColumn)
       {
-        vTile  = new Tile(TILE_LENGTH, TILE_LENGTH);
+        vTile  = new Tile();
         
         vTile.setOnMouseClicked(new TileClickHandler());
         
@@ -250,15 +251,13 @@ public class TileEditor extends Application
     {
       vImages = new ArrayList<Node>();
       
-      vTile   = new Tile(35, 35);
+      vTile   = new Tile();
       
       vTile.setOnMouseClicked(new TileClickHandler());
       
       vImages.add(vTile);
        
       vTile = new Tile(
-          35,
-          35,
           true,
           "file:Resources/Images/water.png",
           "water");
@@ -268,8 +267,6 @@ public class TileEditor extends Application
       vImages.add(vTile);
        
       vTile = new Tile(
-          35,
-          35,
           false,
           "file:Resources/Images/dirt.png",
           "dirt");
@@ -313,11 +310,11 @@ public class TileEditor extends Application
   {
     Integer vRowIndex   = null;
     Integer vColIndex   = null;
-    Integer vTileWidth  = null;
-    Integer vTileHeight = null;
+    Double vTileWidth   = null;
+    Double vTileHeight  = null;
     
-    vRowIndex   = GridPane.getRowIndex(oCurrentTile)    + 1;
-    vColIndex   = GridPane.getColumnIndex(oCurrentTile) + 1;
+    vRowIndex   = GridPane.getRowIndex(oCurrentTile);
+    vColIndex   = GridPane.getColumnIndex(oCurrentTile);
     
     vTileWidth  = oCurrentTile.getTileWidth();
     vTileHeight = oCurrentTile.getTileHeight();
