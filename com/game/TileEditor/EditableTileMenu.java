@@ -1,10 +1,14 @@
 package com.game.TileEditor;
 
 
+import com.game.Utilities.SceneUtils;
+
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -15,9 +19,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 
-public class TileEditableMenu extends GridPane
+public class EditableTileMenu extends GridPane
 {
   private Label     oIsSolidLabel    = null;
   private Label     oImageViewLabel  = null;
@@ -35,18 +41,17 @@ public class TileEditableMenu extends GridPane
   private StackPane oImageViewStackPane  = null;
   private StackPane oTileEventsStackPane = null;
   
-  private TextField oIsSolidTextField = null;
+  private TextField oIsSolidTextField    = null;
+  private ImageView oEditableImage       = null;
   
-  private ImageView oEditableImage = null;
-  private Label     oNoImageLabel  = null;
+  private TileEditor oTileEditor               = null;
   
-  private Tile     oCurrentTile  = null;
-  private TileMenu oSideTileMenu = null;
+  private Integer    oSelectedEditableRowIndex = null;
   
   
-  public TileEditableMenu(TileMenu pSideTileMenu)
+  public EditableTileMenu(TileEditor pTileEditor)
   {
-    oSideTileMenu    = pSideTileMenu;
+    oTileEditor            = pTileEditor;
 
     oIsSolidLabel    = new Label("IsSolid: ");
     oImageViewLabel  = new Label("Image: ");
@@ -78,11 +83,12 @@ public class TileEditableMenu extends GridPane
     
     oEditableImage = new ImageView();
     
-    setColumnConstraints();
+    SceneUtils.setColumnConstraints(this, 2);
+    
     setBaseRowStyles();
-    setHandlers();
     placeLabelsInPanes();
     placePanesInGridPane();
+    setHandlers();
   }
   
   
@@ -91,26 +97,16 @@ public class TileEditableMenu extends GridPane
     oIsSolid.setText(null);
     oTileEvents.setText(null);
     
-    clearPane(oIsSolidStackPane);
-    clearPane(oImageViewStackPane);
-    clearPane(oTileEventsStackPane);
+    SceneUtils.clearPane(oIsSolidStackPane);
+    SceneUtils.clearPane(oImageViewStackPane);
+    SceneUtils.clearPane(oTileEventsStackPane);
     
-    addToPane(oIsSolidStackPane, oIsSolid);
-    addToPane(oTileEventsStackPane, oTileEvents);
-  }
-  
-  
-  private void setColumnConstraints()
-  {
-    ColumnConstraints vColumn1 = null;
-    ColumnConstraints vColumn2 = null;
+    SceneUtils.addToPane(oIsSolidStackPane,    oIsSolid);
+    SceneUtils.addToPane(oTileEventsStackPane, oTileEvents);
     
-    vColumn1 = new ColumnConstraints();
-    vColumn2 = new ColumnConstraints();
+    setBaseRowStyles();
     
-    vColumn1.setPercentWidth(50);
-    vColumn2.setPercentWidth(50);
-    getColumnConstraints().addAll(vColumn1, vColumn2);
+    oSelectedEditableRowIndex = null;
   }
   
   
@@ -125,22 +121,61 @@ public class TileEditableMenu extends GridPane
   }
   
   
+  private void setRowHighlighted(int pRowIndex)
+  {
+    switch(pRowIndex)
+    {
+      case 0:
+        oIsSolidLabelStackPane.setStyle("-fx-background-color: #87ceeb;");
+        oIsSolidStackPane.setStyle("-fx-background-color: #87ceeb;");
+        break;
+        
+      case 1:
+        oImageViewLabelStackPane.setStyle("-fx-background-color: #87ceeb;");
+        oImageViewStackPane.setStyle("-fx-background-color: #87ceeb;");
+        
+        if(SceneUtils.paneContainsNode(oIsSolidStackPane, oIsSolidTextField))
+        {
+          SceneUtils.clearPane(oIsSolidStackPane);
+          SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
+        }
+        
+        break;
+        
+      case 2:
+        oTileEventsLabelStackPane.setStyle("-fx-background-color: #87ceeb;");
+        oTileEventsStackPane.setStyle("-fx-background-color: #87ceeb;");
+        
+        if(SceneUtils.paneContainsNode(oIsSolidStackPane, oIsSolidTextField))
+        {
+          SceneUtils.clearPane(oIsSolidStackPane);
+          SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
+        }
+        
+        break;
+    }
+  }
+  
+  
   private void setHandlers()
   {
     oIsSolidTextField.setOnKeyPressed(new IsSolidTextFieldHandler());
-    oIsSolidLabelStackPane.setOnMouseClicked(new EditableMenuClickHandler());
-    oIsSolidStackPane.setOnMouseClicked(new EditableMenuClickHandler());
+    
+    for(Node vNode : getChildren())
+    {
+      vNode.setOnMouseClicked(new EditableMenuClickHandler());
+    }
   }
   
   
   private void placeLabelsInPanes()
   {
-    addToPane(oIsSolidLabelStackPane,    oIsSolidLabel);
-    addToPane(oImageViewLabelStackPane,  oImageViewLabel);
-    addToPane(oTileEventsLabelStackPane, oTileEventsLabel);
-    addToPane(oIsSolidStackPane,         oIsSolid);
-    addToPane(oImageViewStackPane,       oImageView);
-    addToPane(oTileEventsStackPane,      oTileEvents);
+    SceneUtils.addToPane(oIsSolidLabelStackPane,    oIsSolidLabel);
+    SceneUtils.addToPane(oImageViewLabelStackPane,  oImageViewLabel);
+    SceneUtils.addToPane(oTileEventsLabelStackPane, oTileEventsLabel);
+    SceneUtils.addToPane(oIsSolidStackPane,         oIsSolid);
+    SceneUtils.addToPane(oImageViewStackPane,       oImageView);
+    SceneUtils.addToPane(oTileEventsStackPane,      oTileEvents);
   }
   
   
@@ -165,17 +200,17 @@ public class TileEditableMenu extends GridPane
   
   public void setImageView(Image pImage)
   {
-    clearPane(oImageViewStackPane);
+    SceneUtils.clearPane(oImageViewStackPane);
  
     if(pImage == null)
     {
       oImageView.setText("No Image");
-      addToPane(oImageViewStackPane, oImageView);
+      SceneUtils.addToPane(oImageViewStackPane, oImageView);
     }
     else
     {
       oEditableImage.setImage(pImage);
-      addToPane(oImageViewStackPane, oEditableImage);
+      SceneUtils.addToPane(oImageViewStackPane, oEditableImage);
     }
   }
   
@@ -185,53 +220,38 @@ public class TileEditableMenu extends GridPane
     oTileEvents.setText(pTileEvents);
   }
   
-  
-  public void setCurrentTile(Tile pTile)
-  {
-    oCurrentTile = pTile;
-  }
-  
-  
-  public void clearPane(StackPane pStackPane)
-  {
-    pStackPane.getChildren().clear();
-  }
-  
-  
-  public void addToPane(StackPane pStackPane, Node pNode)
-  {
-    try
-    {
-      pStackPane.getChildren().add(pNode);
-    }
-    catch(IllegalArgumentException IAE)
-    {
-      IAE.printStackTrace();
-      System.out.println(IAE.getMessage());
-    }
-    catch(NullPointerException NPE)
-    {
-      NPE.printStackTrace();
-      System.out.println(NPE.getMessage());
-    }
-    
-  }
-  
-  
   /////// Inner class to handle edit menu clicks ////////
   private class EditableMenuClickHandler implements EventHandler<MouseEvent>
   {
     public void handle(MouseEvent pMouseEvent)
     {
-      StackPane vClickedPane = null;
+      StackPane vClickedPane     = null;
+      int       vClickedRowIndex = -1;
       
-      if(pMouseEvent.getClickCount() == 2 && oCurrentTile != null)
+      vClickedPane     = (StackPane)pMouseEvent.getSource();
+      vClickedRowIndex = GridPane.getRowIndex(vClickedPane);
+      
+      if(oTileEditor.getCurrentTile() != null)
       {
-        vClickedPane = (StackPane)pMouseEvent.getSource();
-        
-        if(GridPane.getRowIndex(vClickedPane) == 0)
+        if(oSelectedEditableRowIndex == null ||
+           vClickedRowIndex          != oSelectedEditableRowIndex)
         {
-          editIsSolidRow();
+          setBaseRowStyles();
+          setRowHighlighted(vClickedRowIndex);
+          
+          oSelectedEditableRowIndex = vClickedRowIndex;
+        }
+        
+        if(pMouseEvent.getClickCount() == 2)
+        {
+          if(GridPane.getRowIndex(vClickedPane) == 0)
+          {
+            editIsSolidRow();
+          }
+          else if(GridPane.getRowIndex(vClickedPane) == 1)
+          {
+            oTileEditor.showLoadedImagesMenu();
+          }
         }
       }
     }
@@ -241,8 +261,8 @@ public class TileEditableMenu extends GridPane
     {
       oIsSolidTextField.setText(oIsSolid.getText());
       
-      clearPane(oIsSolidStackPane);
-      addToPane(oIsSolidStackPane, oIsSolidTextField);
+      SceneUtils.clearPane(oIsSolidStackPane);
+      SceneUtils.addToPane(oIsSolidStackPane, oIsSolidTextField);
     }
   } //End of EditableMenuClickHandler class
   
@@ -253,23 +273,27 @@ public class TileEditableMenu extends GridPane
   {
     public void handle(KeyEvent pKeyEvent) 
     {
-      String  vIsSolidEntry          = null;
+      String  vIsSolidEntry = null;
+      Boolean vIsSolid      = null;
       
       if(pKeyEvent.getCode() == KeyCode.ENTER) 
       {
         vIsSolidEntry = oIsSolidTextField.getText().toLowerCase();
         
-        if((vIsSolidEntry.equals("false")  == true  ||
-            vIsSolidEntry.equals("true")   == true) &&
-            Boolean.valueOf(vIsSolidEntry) != oCurrentTile.isSolid())
+        if(vIsSolidEntry.equals("false")  == true ||
+           vIsSolidEntry.equals("true")   == true)
         {
-          oCurrentTile.setIsSolid(Boolean.valueOf(vIsSolidEntry));
-          oIsSolid.setText(oCurrentTile.isSolid().toString());
-          oSideTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
+          vIsSolid = Boolean.valueOf(vIsSolidEntry);
+          
+          if(vIsSolid != oTileEditor.getCurrentTile().isSolid())
+          {
+            oIsSolid.setText(vIsSolid.toString());
+            oTileEditor.setIsSolidReferences(vIsSolid);
+          }
         }
         
-        clearPane(oIsSolidStackPane);
-        addToPane(oIsSolidStackPane, oIsSolid);
+        SceneUtils.clearPane(oIsSolidStackPane);
+        SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
       }
     }
   } //End of IsSolidTextFieldHandler class
