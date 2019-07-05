@@ -176,7 +176,7 @@ public class LoadedImagesMenu extends BorderPane
     Button   vDeleteButton = null;
     
     vGridPane     = new GridPane();
-    vAddButton    = new Button("Add Entry");
+    vAddButton    = new Button("Add Image");
     vDeleteButton = new Button("Delete");
     
     vGridPane.setPrefHeight(BUTTON_GRIDPANE_HEIGHT);
@@ -226,7 +226,7 @@ public class LoadedImagesMenu extends BorderPane
       
       if(pMouseEvent.getClickCount() == 2)
       {
-        oTileEditor.setImageViewReferences(
+        oTileEditor.setImageReferences(
             oCurrentSelectedRow.getImageName(), 
             oCurrentSelectedRow.getImage());
         

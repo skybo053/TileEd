@@ -23,7 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
-public class TileEditableMenu extends GridPane
+public class EditableTileMenu extends GridPane
 {
   private Label     oIsSolidLabel    = null;
   private Label     oImageViewLabel  = null;
@@ -49,7 +49,7 @@ public class TileEditableMenu extends GridPane
   private Integer    oSelectedEditableRowIndex = null;
   
   
-  public TileEditableMenu(TileEditor pTileEditor)
+  public EditableTileMenu(TileEditor pTileEditor)
   {
     oTileEditor            = pTileEditor;
 
