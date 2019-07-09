@@ -1,9 +1,9 @@
-package com.game.TileEditor;
+package com.game.tileEditor;
 
 import java.util.HashMap;
 
-import com.game.EventHandlers.LoadImagesHandler;
-import com.game.Utilities.SceneUtils;
+import com.game.eventHandlers.LoadImagesHandler;
+import com.game.utilities.SceneUtils;
 
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;

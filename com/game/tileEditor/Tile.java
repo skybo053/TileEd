@@ -1,40 +1,42 @@
-package com.game.TileEditor;
+package com.game.tileEditor;
 
-import com.game.Utilities.SceneUtils;
+import java.util.ArrayList;
+
+import com.game.utilities.SceneUtils;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import tileEvents.TileEvent;
 
 public class Tile extends StackPane
 {
-  private static final String STYLE_CLASS = "grid-cell";
+  private static final String STYLE_CLASS     = "grid-cell";
   
-  private ImageView     oImageView     = null;
-  private Boolean       oIsSolid       = null;
-  private String        oTileImageName = null;
+  private String               oTileImageName = "No Image";
+  private ImageView            oImageView     = null;
+  private Boolean              oIsSolid       = false;
+  private ArrayList<TileEvent> oTileEvents    = null;
+ 
   
   public Tile()
   {
-    oIsSolid       = false;
-    oTileImageName = "No Image";
     oImageView     = new ImageView();
+    oTileEvents    = new ArrayList<TileEvent>();
     
     setPrefWidth(TileEditor.TILE_PANE_LENGTH);
     setPrefHeight(TileEditor.TILE_PANE_LENGTH);
-    
     setTileStyle(STYLE_CLASS);
   }
   
   
   public Tile( 
-      Boolean     pIsSolid, 
-      String      pImagePath,
-      String      pTileImageName)
+      Boolean   pIsSolid, 
+      String    pImagePath,
+      String    pTileImageName)
   {
     this();
     
-    oImageView     = new ImageView();
     oIsSolid       = pIsSolid;
     oTileImageName = pTileImageName;
     
@@ -132,7 +134,6 @@ public class Tile extends StackPane
       return vImage.getHeight();
     }
   }
-  
 
   
   public void setTileImageName(String pTileImageName)
@@ -147,9 +148,15 @@ public class Tile extends StackPane
   }
   
   
-  public String getTileEvents()
+  public void setTileEvents(ArrayList<TileEvent> pTileEvents)
   {
-    return "None";
+    oTileEvents = pTileEvents;
+  }
+  
+  
+  public ArrayList<TileEvent> getTileEvents()
+  {
+    return oTileEvents;
   }
   
   

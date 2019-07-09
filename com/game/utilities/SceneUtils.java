@@ -1,4 +1,4 @@
-package com.game.Utilities;
+package com.game.utilities;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;

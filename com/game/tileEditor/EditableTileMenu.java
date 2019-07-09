@@ -1,7 +1,7 @@
-package com.game.TileEditor;
+package com.game.tileEditor;
 
 
-import com.game.Utilities.SceneUtils;
+import com.game.utilities.SceneUtils;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;

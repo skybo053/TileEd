@@ -1,4 +1,4 @@
-package com.game.EventHandlers;
+package com.game.eventHandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

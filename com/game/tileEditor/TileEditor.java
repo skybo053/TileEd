@@ -1,9 +1,10 @@
-package com.game.TileEditor;
+package com.game.tileEditor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import com.game.EventHandlers.ExitHandler;
-import com.game.EventHandlers.NewProjectHandler;
+import com.game.eventHandlers.ExitHandler;
+import com.game.eventHandlers.NewProjectHandler;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -22,6 +23,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import tileEvents.MoveEvent;
+import tileEvents.TileEvent;
 
 
 public class TileEditor extends Application
@@ -244,8 +247,10 @@ public class TileEditor extends Application
   
   private void configureMainGridPane()
   {
-    Tile            vTile   = null;
-    ArrayList<Node> vImages = null;
+    Tile                 vTile       = null;
+    ArrayList<Node>      vImages     = null;
+    TileEvent            vMoveEvent  = null;
+    ArrayList<TileEvent> vTileEvents = null;
     
     try
     {
@@ -270,6 +275,23 @@ public class TileEditor extends Application
           false,
           "file:Resources/Images/dirt.png",
           "dirt");
+      
+      vTileEvents = new ArrayList<TileEvent>();
+      
+      vMoveEvent  = new MoveEvent("com.game.TileEvents.events.MoveEvent");
+      vMoveEvent.createTileEventArg("java.lang.Integer", "5");
+      vMoveEvent.createTileEventArg("java.lang.Integer", "11");
+      
+      vTileEvents.add(vMoveEvent);
+      
+      vMoveEvent  = new MoveEvent("com.game.TileEvents.events.OTHEREvent");
+      vMoveEvent.createTileEventArg("java.lang.Integer", "100");
+      vMoveEvent.createTileEventArg("java.lang.Integer", "999");
+      
+      vTileEvents.add(vMoveEvent);
+      
+      vTile.setTileEvents(vTileEvents);
+      
       
       vTile.setOnMouseClicked(new TileClickHandler());
       
@@ -325,7 +347,7 @@ public class TileEditor extends Application
     oTileMenu.setHeight(vTileHeight.toString());
     oTileMenu.setImage(oCurrentTile.getTileImageName());
     oTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
-    oTileMenu.setEvents(oCurrentTile.getTileEvents());
+    oTileMenu.setTileEvents(oCurrentTile.getTileEvents());
   }
 
   
@@ -366,6 +388,7 @@ public class TileEditor extends Application
     {
       oCurrentTile = (Tile)pMouseEvent.getSource();
 
+      oTileMenu.clearAttributeValues();
       oEditableTileMenu.clearAttributeValues();
       
       if(oPreviousTile != null)

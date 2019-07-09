@@ -1,6 +1,6 @@
-package com.game.EventHandlers;
+package com.game.eventHandlers;
 
-import com.game.TileEditor.TileEditor;
+import com.game.tileEditor.TileEditor;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

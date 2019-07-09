@@ -1,8 +1,17 @@
-package com.game.TileEditor;
+package com.game.tileEditor;
 
+import java.util.ArrayList;
+
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import tileEvents.TileEvent;
 
 
 public class TileMenu extends GridPane
@@ -16,11 +25,12 @@ public class TileMenu extends GridPane
   private Label oIsSolidLabel   = null;
   private Label oIsSolid        = null;
   private Label oEventsLabel    = null;
-  private Label oEvents         = null;
   private Label oWidthLabel     = null;
   private Label oWidth          = null;
   private Label oHeight         = null;
   private Label oHeightLabel    = null;
+  
+  private ListView<TileEvent> oTileEvents = null;
   
   
   public TileMenu()
@@ -33,24 +43,27 @@ public class TileMenu extends GridPane
     oWidthLabel     = new Label("Width: ");
     oHeightLabel    = new Label("Height: ");
     
-    oRow     = new Label();
-    oColumn  = new Label();
-    oImage   = new Label();
-    oIsSolid = new Label();
-    oEvents  = new Label();
-    oWidth   = new Label();
-    oHeight  = new Label();
+    oRow        = new Label();
+    oColumn     = new Label();
+    oImage      = new Label();
+    oIsSolid    = new Label();
+    oWidth      = new Label();
+    oHeight     = new Label();
     
-    GridPane.setMargin(oRowPosLabel,    new Insets(0,15,0,5));
-    GridPane.setMargin(oColumnPosLabel, new Insets(0,15,0,5));
-    GridPane.setMargin(oImageLabel,     new Insets(0,15,0,5));
-    GridPane.setMargin(oIsSolidLabel,   new Insets(0,15,0,5));
-    GridPane.setMargin(oEventsLabel,    new Insets(0,15,0,5));
-    GridPane.setMargin(oWidthLabel,     new Insets(0,15,0,5));
-    GridPane.setMargin(oHeightLabel,    new Insets(0,15,0,5));
+    oTileEvents = new ListView<TileEvent>();
     
-    configureStyles();
-    placeLabels();
+    GridPane.setMargin(oRowPosLabel,    new Insets(0,12,0,5));
+    GridPane.setMargin(oColumnPosLabel, new Insets(0,12,0,5));
+    GridPane.setMargin(oImageLabel,     new Insets(0,12,0,5));
+    GridPane.setMargin(oIsSolidLabel,   new Insets(0,12,0,5));
+    GridPane.setMargin(oEventsLabel,    new Insets(0,12,0,5));
+    GridPane.setMargin(oWidthLabel,     new Insets(0,12,0,5));
+    GridPane.setMargin(oHeightLabel,    new Insets(0,12,0,5));
+    
+    GridPane.setValignment(oEventsLabel, VPos.TOP);
+    
+    configureListView();
+    placeComponents();
   }
   
   
@@ -60,19 +73,32 @@ public class TileMenu extends GridPane
     oColumn.setText(null);
     oImage.setText(null);
     oIsSolid.setText(null);
-    oEvents.setText(null);
     oWidth.setText(null);
     oHeight.setText(null);
-  }
-  
-
-  private void configureStyles()
-  {
     
+    oTileEvents.getItems().clear();
   }
   
   
-  private void placeLabels()
+  private void configureListView()
+  {
+    oTileEvents.setPrefHeight(50.0);
+    oTileEvents.setPrefWidth(95.0);
+    oTileEvents.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+    
+    oTileEvents.setOnMouseClicked(pEvent->{
+      
+      ListView<TileEvent> vTileEvents = (ListView<TileEvent>)pEvent.getSource();
+      
+      TileEvent vTileEvent    = vTileEvents.getSelectionModel().getSelectedItem();
+      
+      System.out.println(vTileEvent.toJSON());
+      
+    });
+  }
+  
+  
+  private void placeComponents()
   {
     add(oRowPosLabel, 0, 0);
     add(oRow, 1, 0);
@@ -93,7 +119,7 @@ public class TileMenu extends GridPane
     add(oIsSolid, 1, 5);
     
     add(oEventsLabel, 0, 6);
-    add(oEvents, 1, 6);
+    add(oTileEvents, 1, 6);
   }
   
   
@@ -133,9 +159,16 @@ public class TileMenu extends GridPane
   }
   
   
-  public void setEvents(String pEvents)
+  public void setTileEvents(ArrayList<TileEvent> pTileEvents)
   {
-    oEvents.setText(pEvents);
+    ObservableList<TileEvent> pTileEventList = null;
+    
+    pTileEventList = oTileEvents.getItems();
+    
+    for(TileEvent pTileEvent : pTileEvents)
+    {
+      pTileEventList.add(pTileEvent);
+    }
   }
   
 }

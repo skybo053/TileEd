@@ -1,12 +1,12 @@
-package com.game.EventHandlers;
+package com.game.eventHandlers;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import com.game.TileEditor.LoadedImagesMenu;
-import com.game.TileEditor.TileEditor;
-import com.game.Utilities.SceneUtils;
+import com.game.tileEditor.LoadedImagesMenu;
+import com.game.tileEditor.TileEditor;
+import com.game.utilities.SceneUtils;
 
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
