@@ -5,8 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
 
 public class SceneUtils 
 {
@@ -44,11 +44,11 @@ public class SceneUtils
   }
   
   
-  public static boolean paneContainsNode(StackPane pStackPane, Node pNode)
+  public static boolean paneContainsNode(Pane pPane, Node pNode)
   {
     ObservableList<Node> vNodes = null;
     
-    vNodes = pStackPane.getChildren();
+    vNodes = pPane.getChildren();
     
     if(vNodes.size() == 0)
     {
@@ -65,15 +65,15 @@ public class SceneUtils
   }
   
   
-  public static void clearPane(StackPane pStackPane)
+  public static void clearPane(Pane pPane)
   {
-    pStackPane.getChildren().clear();
+    pPane.getChildren().clear();
   }
   
   
-  public static void addToPane(StackPane pStackPane, Node pNode)
+  public static void addToPane(Pane pPane, Node pNode)
   {
-    pStackPane.getChildren().add(pNode);
+    pPane.getChildren().add(pNode);
   }
   
   

@@ -150,7 +150,13 @@ public class Tile extends StackPane
   
   public void setTileEvents(ArrayList<TileEvent> pTileEvents)
   {
-    oTileEvents = pTileEvents;
+    oTileEvents.addAll(pTileEvents);
+  }
+  
+  
+  public void addTileEvent(TileEvent pTileEvent)
+  {
+    oTileEvents.add(pTileEvent);
   }
   
   

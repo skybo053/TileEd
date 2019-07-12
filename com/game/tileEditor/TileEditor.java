@@ -250,7 +250,6 @@ public class TileEditor extends Application
     Tile                 vTile       = null;
     ArrayList<Node>      vImages     = null;
     TileEvent            vMoveEvent  = null;
-    ArrayList<TileEvent> vTileEvents = null;
     
     try
     {
@@ -276,22 +275,18 @@ public class TileEditor extends Application
           "file:Resources/Images/dirt.png",
           "dirt");
       
-      vTileEvents = new ArrayList<TileEvent>();
       
       vMoveEvent  = new MoveEvent("com.game.TileEvents.events.MoveEvent");
       vMoveEvent.createTileEventArg("java.lang.Integer", "5");
       vMoveEvent.createTileEventArg("java.lang.Integer", "11");
-      
-      vTileEvents.add(vMoveEvent);
+ 
+      vTile.addTileEvent(vMoveEvent);
       
       vMoveEvent  = new MoveEvent("com.game.TileEvents.events.OTHEREvent");
       vMoveEvent.createTileEventArg("java.lang.Integer", "100");
       vMoveEvent.createTileEventArg("java.lang.Integer", "999");
       
-      vTileEvents.add(vMoveEvent);
-      
-      vTile.setTileEvents(vTileEvents);
-      
+      vTile.addTileEvent(vMoveEvent);
       
       vTile.setOnMouseClicked(new TileClickHandler());
       
