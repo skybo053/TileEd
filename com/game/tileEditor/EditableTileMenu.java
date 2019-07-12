@@ -51,7 +51,7 @@ public class EditableTileMenu extends GridPane
   
   public EditableTileMenu(TileEditor pTileEditor)
   {
-    oTileEditor            = pTileEditor;
+    oTileEditor      = pTileEditor;
 
     oIsSolidLabel    = new Label("IsSolid: ");
     oImageViewLabel  = new Label("Image: ");
@@ -228,11 +228,11 @@ public class EditableTileMenu extends GridPane
       StackPane vClickedPane     = null;
       int       vClickedRowIndex = -1;
       
-      vClickedPane     = (StackPane)pMouseEvent.getSource();
-      vClickedRowIndex = GridPane.getRowIndex(vClickedPane);
-      
       if(oTileEditor.getCurrentTile() != null)
       {
+        vClickedPane     = (StackPane)pMouseEvent.getSource();
+        vClickedRowIndex = GridPane.getRowIndex(vClickedPane);
+        
         if(oSelectedEditableRowIndex == null ||
            vClickedRowIndex          != oSelectedEditableRowIndex)
         {

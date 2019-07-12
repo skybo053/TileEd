@@ -3,7 +3,7 @@ package com.game.tileEditor;
 import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
-import javafx.event.EventType;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -19,10 +19,6 @@ import tileEvents.TileEvent;
 
 public class TileMenu extends GridPane
 {
-  private static final double TILE_EVENTS_PANE_WIDTH  = 250.0;
-  private static final double TILE_EVENTS_PANE_HEIGHT = 85.0;
-  private static final double LIST_VIEW_X_POS         = 882.0;
-  
   private Label oRowPosLabel    = null;
   private Label oColumnPosLabel = null;
   private Label oRow            = null;
@@ -37,7 +33,6 @@ public class TileMenu extends GridPane
   private Label oHeight         = null;
   private Label oHeightLabel    = null;
   
-  private Pane  oTileEventsPane  = null;
   private Label oTileEventsLabel = null;
   private Popup oTileEventsPopup = null;
   
@@ -67,7 +62,6 @@ public class TileMenu extends GridPane
     
     oTileEventsLabel = new Label();
     oTileEventsPopup = new Popup();
-    oTileEventsPane  = new Pane();
     oTileEvents      = new ListView<TileEvent>();
     
     oLabelWidth  = 295.0;
@@ -99,7 +93,8 @@ public class TileMenu extends GridPane
     oWidth.setText(null);
     oHeight.setText(null);
     
-    oTileEventsPopup.hide();
+    closeTileEventsPopup();
+    
     oTileEventsLabel.setText(null);
     oTileEvents.getItems().clear();
   }
@@ -125,7 +120,7 @@ public class TileMenu extends GridPane
   {
     oTileEventsPopup.addEventHandler(MouseEvent.MOUSE_CLICKED, pEvent->
     {
-      oTileEventsPopup.hide();
+      closeTileEventsPopup();
     });
     
     oTileEventsPopup.getContent().add(oTileEventsLabel);
@@ -137,44 +132,7 @@ public class TileMenu extends GridPane
     oTileEvents.setPrefHeight(50.0);
     oTileEvents.setPrefWidth(95.0);
     oTileEvents.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-    
-    oTileEvents.setOnMouseClicked(pEvent->
-    {
-      ListView<TileEvent>  vTileEventsListView   = null;
-      TileEvent            vTileEvent            = null;
-      Double               vSceneX               = null;
-      Double               vSceneY               = null;
-      
-      Bounds vBounds       = null;
-      Double vListViewXPos = null;
-      Double vListViewYPos = null;
-      Double vLabelXOffset = null;
-      Double vLabelYOffset = null;
-      
-      vTileEventsListView = (ListView<TileEvent>)pEvent.getSource();
-      vTileEvent          = vTileEventsListView.getSelectionModel().getSelectedItem();
-      
-      if(vTileEvent != null)
-      {
-        vSceneX       = pEvent.getSceneX();
-        vSceneY       = pEvent.getSceneY();
-        vBounds       = vTileEventsListView.localToScene(vTileEventsListView.getBoundsInLocal());
-        
-        oTileEventsLabel.setText(vTileEvent.toJSON());
-        
-        vListViewXPos = vBounds.getMinX();
-        vListViewYPos = vBounds.getMinY();
-        
-        System.out.println("LabelWidth: " + oLabelWidth + " LabelHeight: " + oLabelHeight);
-        System.out.println("ListView X = " + vListViewXPos + " ListView Y = " + vListViewYPos);
-        System.out.println("Clicked X = " + vSceneX + " Clicked Y = " + vSceneY);
-        
-        oTileEventsPopup.show(
-            vTileEventsListView, 
-            vListViewXPos - (oLabelWidth / 2), 
-            vSceneY + (oLabelHeight / 2));
-      }
-    });
+    oTileEvents.setOnMouseClicked(new TileEventListViewHandler());
   }
   
   
@@ -200,6 +158,15 @@ public class TileMenu extends GridPane
     
     add(oEventsLabel, 0, 6);
     add(oTileEvents, 1, 6);
+  }
+  
+  
+  public void closeTileEventsPopup()
+  {
+    if(oTileEventsPopup.isShowing())
+    {
+      oTileEventsPopup.hide();
+    }
   }
   
   
@@ -248,6 +215,42 @@ public class TileMenu extends GridPane
     for(TileEvent pTileEvent : pTileEvents)
     {
       pTileEventList.add(pTileEvent);
+    }
+  }
+  
+  
+  private class TileEventListViewHandler implements EventHandler<MouseEvent>
+  {
+    public void handle(MouseEvent pMouseEvent)
+    {
+      ListView<TileEvent>  vTileEventsListView   = null;
+      TileEvent            vTileEvent            = null;
+      Double               vSceneX               = null;
+      Double               vSceneY               = null;
+      
+      Bounds vBounds       = null;
+      Double vListViewXPos = null;
+      Double vListViewYPos = null;
+      
+      vTileEventsListView = (ListView<TileEvent>)pMouseEvent.getSource();
+      vTileEvent          = vTileEventsListView.getSelectionModel().getSelectedItem();
+      
+      if(vTileEvent != null)
+      {
+        vSceneX       = pMouseEvent.getSceneX();
+        vSceneY       = pMouseEvent.getSceneY();
+        vBounds       = vTileEventsListView.localToScene(vTileEventsListView.getBoundsInLocal());
+        
+        oTileEventsLabel.setText(vTileEvent.toJSON());
+        
+        vListViewXPos = vBounds.getMinX();
+        vListViewYPos = vBounds.getMinY();
+        
+        oTileEventsPopup.show(
+            vTileEventsListView, 
+            vListViewXPos - (oLabelWidth / 2), 
+            vSceneY + (oLabelHeight / 2));
+      }
     }
   }
   
