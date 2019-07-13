@@ -41,9 +41,12 @@ public class TileMenu extends GridPane
   
   private ListView<TileEvent> oTileEvents = null;
 
+  private TileEditor oTileEditor = null;
   
-  public TileMenu()
+  
+  public TileMenu(TileEditor pTileEditor)
   {
+    oTileEditor     = pTileEditor;
     
     oRowPosLabel    = new Label("Row Index: ");
     oColumnPosLabel = new Label("Column Index: ");
@@ -79,7 +82,7 @@ public class TileMenu extends GridPane
     
     configureTileEventsLabel();
     configureTileEventsPopup();
-    configureListView();
+    configureTileEventsListView();
     placeComponents();
   }
   
@@ -127,12 +130,25 @@ public class TileMenu extends GridPane
   }
   
   
-  private void configureListView()
+  private void configureTileEventsListView()
   {
     oTileEvents.setPrefHeight(50.0);
     oTileEvents.setPrefWidth(95.0);
     oTileEvents.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     oTileEvents.setOnMouseClicked(new TileEventListViewHandler());
+    
+    oTileEvents.focusedProperty().addListener((pObservable, pOldValue, pNewValue)->
+    {
+      if(pNewValue == false)
+      {
+        closeTileEventsPopup();
+        oTileEvents.getSelectionModel().clearSelection();
+      }
+      else
+      {
+        oTileEditor.unhighlightEditableTileMenu();
+      }
+    });
   }
   
   

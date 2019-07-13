@@ -89,7 +89,7 @@ public class TileEditor extends Application
     oFileMenu                  = new Menu("File");
     oMainGridPane              = new GridPane();
     oMainScrollPane            = new ScrollPane();
-    oTileMenu                  = new TileMenu();
+    oTileMenu                  = new TileMenu(this);
     oEditableTileMenu          = new EditableTileMenu(this);
     oSideFlowPane              = new FlowPane();
     oTileAttribsTitledPane     = new TitledPane();
@@ -350,6 +350,15 @@ public class TileEditor extends Application
   {
     oEditableTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
     oEditableTileMenu.setImageView(oCurrentTile.getTileImage());
+  }
+  
+  
+  public void unhighlightEditableTileMenu()
+  {
+    if(oEditableTileMenu.isHighlighted())
+    {
+      oEditableTileMenu.unhighlightMenu();
+    }
   }
   
   

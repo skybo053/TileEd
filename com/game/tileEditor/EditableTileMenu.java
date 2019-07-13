@@ -51,19 +51,16 @@ public class EditableTileMenu extends GridPane
   
   public EditableTileMenu(TileEditor pTileEditor)
   {
-    oTileEditor      = pTileEditor;
-
-    oIsSolidLabel    = new Label("IsSolid: ");
-    oImageViewLabel  = new Label("Image: ");
-    oTileEventsLabel = new Label("TileEvents:");
+    oTileEditor       = pTileEditor;
     
-    oIsSolid    = new Label();
-    oImageView  = new Label();
-    oTileEvents = new Label();
-    
-    oIsSolidLabel.setPadding(   new Insets(0,15,0,5));
-    oImageViewLabel.setPadding( new Insets(0,15,0,5));
-    oTileEventsLabel.setPadding(new Insets(0,15,0,5));
+    oIsSolidLabel     = new Label("IsSolid: ");
+    oImageViewLabel   = new Label("Image: ");
+    oTileEventsLabel  = new Label("TileEvents:");
+    oIsSolid          = new Label();
+    oImageView        = new Label();
+    oTileEvents       = new Label();
+    oEditableImage    = new ImageView();
+    oIsSolidTextField = new TextField();
     
     oIsSolidLabelStackPane    = new StackPane();
     oImageViewLabelStackPane  = new StackPane();
@@ -72,7 +69,9 @@ public class EditableTileMenu extends GridPane
     oImageViewStackPane       = new StackPane();
     oTileEventsStackPane      = new StackPane();
     
-    oIsSolidTextField = new TextField();
+    oIsSolidLabel.setPadding(   new Insets(0,15,0,5));
+    oImageViewLabel.setPadding( new Insets(0,15,0,5));
+    oTileEventsLabel.setPadding(new Insets(0,15,0,5));
     
     oIsSolidLabelStackPane.setAlignment(   Pos.CENTER_LEFT);
     oImageViewLabelStackPane.setAlignment( Pos.CENTER_LEFT);
@@ -81,14 +80,30 @@ public class EditableTileMenu extends GridPane
     oImageViewStackPane.setAlignment(      Pos.CENTER_LEFT);
     oTileEventsStackPane.setAlignment(     Pos.CENTER_LEFT);
     
-    oEditableImage = new ImageView();
-    
     SceneUtils.setColumnConstraints(this, 2);
     
+    configureFocusAction();
     setBaseRowStyles();
     placeLabelsInPanes();
     placePanesInGridPane();
     setHandlers();
+  }
+  
+  
+  private void configureFocusAction()
+  {
+    this.focusedProperty().addListener((obs, oldVal, newVal)->
+    {
+      if(newVal == false)
+      {
+        System.out.println("EditableTileMenu lost focus");
+      }
+      else
+      {
+        System.out.println("EditableTileMenu gained focus");
+      }
+      
+    });
   }
   
   
@@ -118,6 +133,22 @@ public class EditableTileMenu extends GridPane
     oImageViewStackPane.setStyle("-fx-background-color: white;");
     oTileEventsLabelStackPane.setStyle("-fx-background-color: #f4f5f7;");
     oTileEventsStackPane.setStyle("-fx-background-color: #f4f5f7;");
+  }
+  
+  
+  public void unhighlightMenu()
+  {
+    setBaseRowStyles();
+    
+    if(SceneUtils.paneContainsNode(oIsSolidStackPane, oIsSolidTextField))
+    {
+      oIsSolidTextField.setText(null);
+      
+      SceneUtils.clearPane(oIsSolidStackPane);
+      SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
+    }
+    
+    oSelectedEditableRowIndex = null;
   }
   
   
@@ -219,6 +250,20 @@ public class EditableTileMenu extends GridPane
   {
     oTileEvents.setText(pTileEvents);
   }
+  
+  
+  public Boolean isHighlighted()
+  {
+    if(oSelectedEditableRowIndex == null)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+  
   
   /////// Inner class to handle edit menu clicks ////////
   private class EditableMenuClickHandler implements EventHandler<MouseEvent>
