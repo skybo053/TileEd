@@ -57,7 +57,7 @@ public class TileEditor extends Application
   
   private Tile oCurrentTile  = null;
   private Tile oPreviousTile = null;
-  
+
   
   public static void main(String[] pArgs) 
   {
