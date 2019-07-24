@@ -167,6 +167,7 @@ public class EditableTileMenu extends GridPane
       SceneUtils.addToPane(oIsSolidStackPane, oIsSolid);
     }
     
+    oTileEventsList.getSelectionModel().clearSelection();
     oSelectedEditableRowIndex = null;
   }
   
@@ -385,16 +386,17 @@ public class EditableTileMenu extends GridPane
       ListView<TileEvent>  vTileEventsListView   = null;
       TileEvent            vTileEvent            = null;
       
-      vTileEventsListView = (ListView<TileEvent>)pMouseEvent.getSource();
-      vTileEvent          = vTileEventsListView.getSelectionModel().getSelectedItem();
-      
-      if(vTileEvent != null)
+      if(pMouseEvent.getClickCount() == 2)
       {
-        oEditableTileEventsMenu.setTileEvent(vTileEvent);
-        oEditableTileEventsMenuStage.show();
+        vTileEventsListView = (ListView<TileEvent>)pMouseEvent.getSource();
+        vTileEvent          = vTileEventsListView.getSelectionModel().getSelectedItem();
+        
+        if(vTileEvent != null)
+        {
+          oEditableTileEventsMenu.setTileEvent(vTileEvent);
+          oEditableTileEventsMenuStage.show();
+        }
       }
-      
-     
     }
   }
   

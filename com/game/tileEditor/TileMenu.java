@@ -227,17 +227,22 @@ public class TileMenu extends GridPane
       ListView<TileEvent>  vTileEventsListView   = null;
       TileEvent            vTileEvent            = null;
       
-      vTileEventsListView = (ListView<TileEvent>)pMouseEvent.getSource();
-      vTileEvent          = vTileEventsListView.getSelectionModel().getSelectedItem();
+      closeTileEventsPopup();
       
-      if(vTileEvent != null)
+      if(pMouseEvent.getClickCount() == 2)
       {
-        oTileEventsLabel.setText(vTileEvent.toDisplayString());
+        vTileEventsListView = (ListView<TileEvent>)pMouseEvent.getSource();
+        vTileEvent          = vTileEventsListView.getSelectionModel().getSelectedItem();
         
-        oTileEventsPopup.show(
-            vTileEventsListView, 
-            pMouseEvent.getScreenX() - LABEL_OFFSET, 
-            pMouseEvent.getScreenY());
+        if(vTileEvent != null)
+        {
+          oTileEventsLabel.setText(vTileEvent.toDisplayString());
+          
+          oTileEventsPopup.show(
+              vTileEventsListView, 
+              pMouseEvent.getScreenX() - LABEL_OFFSET, 
+              pMouseEvent.getScreenY());
+        }
       }
     }
   }
