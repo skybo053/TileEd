@@ -350,6 +350,7 @@ public class TileEditor extends Application
   {
     oEditableTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
     oEditableTileMenu.setImageView(oCurrentTile.getTileImage());
+    oEditableTileMenu.setTileEvents(oCurrentTile.getTileEvents());
   }
   
   

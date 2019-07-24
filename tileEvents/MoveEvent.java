@@ -76,4 +76,27 @@ public class MoveEvent implements TileEvent
   {
     return EVENT_NAME;
   }
+  
+  
+  public String toDisplayString()
+  {
+    StringBuilder vDisplayString = null;
+    TileEventArg  vTileEventArg  = null;
+    
+    vDisplayString = new StringBuilder(255);
+    
+    vDisplayString.append("Event Class Name:  ");
+    vDisplayString.append(oEventClassName);
+    
+    for(Iterator<TileEventArg> vIterator = oTileEventArgs.iterator(); vIterator.hasNext();)
+    {
+      vTileEventArg = vIterator.next();
+      
+      vDisplayString.append("\n");
+      vDisplayString.append("Argument Type:  " + vTileEventArg.getArgClassType() + "  ");
+      vDisplayString.append("Value:  " + vTileEventArg.getArgValue());    
+    }
+    
+    return vDisplayString.toString();
+  }
 }

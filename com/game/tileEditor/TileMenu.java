@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
@@ -12,7 +11,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Popup;
 import tileEvents.TileEvent;
 
@@ -38,7 +36,7 @@ public class TileMenu extends GridPane
   private Label oTileEventsLabel = null;
   private Popup oTileEventsPopup = null;
   
-  private ListView<TileEvent> oTileEvents = null;
+  private ListView<TileEvent> oTileEventsList = null;
 
   private TileEditor oTileEditor = null;
   
@@ -64,7 +62,7 @@ public class TileMenu extends GridPane
     
     oTileEventsLabel = new Label();
     oTileEventsPopup = new Popup();
-    oTileEvents      = new ListView<TileEvent>();
+    oTileEventsList  = new ListView<TileEvent>();
     
     GridPane.setMargin(oRowPosLabel,    new Insets(0,12,0,5));
     GridPane.setMargin(oColumnPosLabel, new Insets(0,12,0,5));
@@ -95,13 +93,14 @@ public class TileMenu extends GridPane
     closeTileEventsPopup();
     
     oTileEventsLabel.setText(null);
-    oTileEvents.getItems().clear();
+    oTileEventsList.getItems().clear();
   }
   
   
   private void configureTileEventsLabel()
   {
     oTileEventsLabel.setStyle("-fx-background-color: #fffbd7;");
+    oTileEventsLabel.setPadding(new Insets(5,5,5,5));
   }
   
   
@@ -118,17 +117,17 @@ public class TileMenu extends GridPane
   
   private void configureTileEventsListView()
   {
-    oTileEvents.setPrefHeight(50.0);
-    oTileEvents.setPrefWidth(95.0);
-    oTileEvents.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-    oTileEvents.setOnMouseClicked(new TileEventListViewHandler());
+    oTileEventsList.setPrefHeight(50.0);
+    oTileEventsList.setPrefWidth(95.0);
+    oTileEventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+    oTileEventsList.setOnMouseClicked(new TileEventListViewHandler());
     
-    oTileEvents.focusedProperty().addListener((pObservable, pOldValue, pNewValue)->
+    oTileEventsList.focusedProperty().addListener((pObservable, pOldValue, pNewValue)->
     {
       if(pNewValue == false)
       {
         closeTileEventsPopup();
-        oTileEvents.getSelectionModel().clearSelection();
+        oTileEventsList.getSelectionModel().clearSelection();
       }
       else
       {
@@ -159,7 +158,7 @@ public class TileMenu extends GridPane
     add(oIsSolid, 1, 5);
     
     add(oEventsLabel, 0, 6);
-    add(oTileEvents, 1, 6);
+    add(oTileEventsList, 1, 6);
   }
   
   
@@ -212,7 +211,7 @@ public class TileMenu extends GridPane
   {
     ObservableList<TileEvent> pTileEventList = null;
     
-    pTileEventList = oTileEvents.getItems();
+    pTileEventList = oTileEventsList.getItems();
     
     for(TileEvent pTileEvent : pTileEvents)
     {
@@ -233,7 +232,7 @@ public class TileMenu extends GridPane
       
       if(vTileEvent != null)
       {
-        oTileEventsLabel.setText(vTileEvent.toJSON());
+        oTileEventsLabel.setText(vTileEvent.toDisplayString());
         
         oTileEventsPopup.show(
             vTileEventsListView, 

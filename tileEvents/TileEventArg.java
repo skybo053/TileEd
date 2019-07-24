@@ -13,6 +13,18 @@ public class TileEventArg
   }
   
   
+  public String getArgClassType()
+  {
+    return oClassType;
+  }
+  
+  
+  public String getArgValue()
+  {
+    return oValue;
+  }
+  
+  
   public String toJSON()
   {
     StringBuilder vJSONString = null;
