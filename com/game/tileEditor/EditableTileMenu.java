@@ -123,7 +123,7 @@ public class EditableTileMenu extends GridPane
     
     oEditableTileEventsMenuStage.setOnCloseRequest(pWindowEvent->
     {
-      
+      oEditableTileEventsMenu.clearMenu();
     });
   }
   
@@ -394,8 +394,9 @@ public class EditableTileMenu extends GridPane
         if(vTileEvent != null)
         {
           oEditableTileEventsMenu.setTileEvent(vTileEvent);
-          oEditableTileEventsMenuStage.show();
         }
+        
+        oEditableTileEventsMenuStage.show();
       }
     }
   }

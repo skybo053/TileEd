@@ -94,7 +94,7 @@ public class MoveEvent implements TileEvent
       
       vDisplayString.append("\n");
       vDisplayString.append("Argument Type:  " + vTileEventArg.getArgClassType() + "  ");
-      vDisplayString.append("Value:  " + vTileEventArg.getArgValue());    
+      vDisplayString.append("Argument Value:  " + vTileEventArg.getArgValue());    
     }
     
     return vDisplayString.toString();
