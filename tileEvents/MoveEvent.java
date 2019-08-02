@@ -24,6 +24,12 @@ public class MoveEvent implements TileEvent
   }
   
   
+  public ArrayList<TileEventArg> getTileEventArgs()
+  {
+    return oTileEventArgs;
+  }
+  
+  
   public TileEventArg createTileEventArg(String pClassType, String pValue)
   {
     TileEventArg vTileEventArg = null;

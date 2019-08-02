@@ -1,5 +1,6 @@
 package com.game.tileEditor;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import com.game.utilities.SceneUtils;
@@ -7,6 +8,7 @@ import com.game.utilities.SceneUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -16,9 +18,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import tileEvents.MoveEventDisplayConfig;
 import tileEvents.TileEvent;
-import tileEvents.TileEventMenuConfig;
+import tileEvents.menuDisplayConfigs.MoveEventDisplayConfig;
+import tileEvents.menuDisplayConfigs.TileEventDisplayConfig;
 
 
 public class EditableTileEventsMenu extends BorderPane
@@ -26,16 +28,17 @@ public class EditableTileEventsMenu extends BorderPane
   private static final double PANE_WIDTH  = 600.0;
   private static final double PANE_HEIGHT = 500.0;
   
+  private static final int    NUM_COLUMNS = 2;
+  
   private TileEvent oTileEvent = null;
   
-  private ListView<String>                     oTileEventsList = null;
-  private TreeMap<String, TileEventMenuConfig> oDisplayConfigs = null;
+  private ListView<String>                        oTileEventsList = null;
+  private TreeMap<String, TileEventDisplayConfig> oDisplayConfigs = null;
   
   private BorderPane oTopPane                 = null;
   private FlowPane   oTileEventsListPane      = null;
   private FlowPane   oTileEventClassPane      = null;
   private GridPane   oTileEventArgsPane       = null;
-  private ScrollPane oTileEventArgsScrollPane = null;
   private GridPane   oButtonsPane             = null;
   private Label      oEventClassLabel         = null;
   private TextField  oEventClassTextField     = null;
@@ -48,13 +51,12 @@ public class EditableTileEventsMenu extends BorderPane
     setPrefHeight(PANE_HEIGHT);
     
     oTileEventsList          = new ListView<String>();
-    oDisplayConfigs          = new TreeMap<String, TileEventMenuConfig>();
+    oDisplayConfigs          = new TreeMap<String, TileEventDisplayConfig>();
     
     oTopPane                 = new BorderPane();
     oTileEventsListPane      = new FlowPane();
     oTileEventClassPane      = new FlowPane();
     oTileEventArgsPane       = new GridPane();
-    oTileEventArgsScrollPane = new ScrollPane();
     oButtonsPane             = new GridPane();
     
     oEventClassLabel         = new Label("Event Class Name: ");
@@ -71,7 +73,6 @@ public class EditableTileEventsMenu extends BorderPane
   
   private void configureTopPane()
   {
-    configureEventClassTextField();
     configureTileEventsList();
     configureTileEventsListPane();
     configureTileEventClassPane();
@@ -83,13 +84,9 @@ public class EditableTileEventsMenu extends BorderPane
   
   private void configureTileEventArgsPane()
   {
-    oTileEventArgsScrollPane.setContent(oTileEventArgsPane);
-  }
-  
-  
-  private void configureEventClassTextField()
-  {
+    SceneUtils.setColumnConstraints(oTileEventArgsPane, 1);
     
+    oTileEventArgsPane.setStyle("-fx-background-color: cyan;");
   }
   
   
@@ -133,23 +130,41 @@ public class EditableTileEventsMenu extends BorderPane
   private void addPanesToBorderPane()
   {
     setTop(oTopPane);
-    setCenter(oTileEventArgsScrollPane);
+    setCenter(oTileEventArgsPane);
   }
   
   
   private void displayMenu(String pTileEventName)
   {
-    TileEventMenuConfig vMenuConfig = null;
+    TileEventDisplayConfig vMenuConfig    = null;
     
-    vMenuConfig = oDisplayConfigs.get(pTileEventName);
+    vMenuConfig    = oDisplayConfigs.get(pTileEventName);
     
     oEventClassTextField.setText(vMenuConfig.getTileEventClassName());
+    
+    SceneUtils.clearPane(oTileEventArgsPane);
+    
+    for(int vRowCount = 0; vRowCount < vMenuConfig.getRowCount(); ++vRowCount)
+    {
+      oTileEventArgsPane.add(vMenuConfig.getRowNode(vRowCount), 0, vRowCount);
+    }
+    
+    if(oTileEvent != null)
+    {
+      vMenuConfig.setTextFieldArgValues(oTileEvent.getTileEventArgs());
+    }
   }
   
   
   public void setTileEvent(TileEvent pTileEvent)
   {
-    oTileEvent = pTileEvent;
+    String vTileEventName = null;
+    
+    oTileEvent     = pTileEvent;
+    vTileEventName = pTileEvent.getEventName();
+    
+    oTileEventsList.getSelectionModel().select(vTileEventName);
+    displayMenu(vTileEventName);
   }
   
   
@@ -160,6 +175,8 @@ public class EditableTileEventsMenu extends BorderPane
     oEventClassTextField.clear();
     
     SceneUtils.clearPane(oTileEventArgsPane);
+    
+    oTileEvent = null;
   }
   
   
