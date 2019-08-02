@@ -35,6 +35,8 @@ public class EditableTileEventsMenu extends BorderPane
   private ListView<String>                        oTileEventsList = null;
   private TreeMap<String, TileEventDisplayConfig> oDisplayConfigs = null;
   
+  private TileEventDisplayConfig oCurrentDisplayConfig = null;
+  
   private BorderPane oTopPane                 = null;
   private FlowPane   oTileEventsListPane      = null;
   private FlowPane   oTileEventClassPane      = null;
@@ -134,24 +136,20 @@ public class EditableTileEventsMenu extends BorderPane
   }
   
   
-  private void displayMenu(String pTileEventName)
+  private void displayMenu()
   {
-    TileEventDisplayConfig vMenuConfig    = null;
-    
-    vMenuConfig    = oDisplayConfigs.get(pTileEventName);
-    
-    oEventClassTextField.setText(vMenuConfig.getTileEventClassName());
+    oEventClassTextField.setText(oCurrentDisplayConfig.getTileEventClassName());
     
     SceneUtils.clearPane(oTileEventArgsPane);
     
-    for(int vRowCount = 0; vRowCount < vMenuConfig.getRowCount(); ++vRowCount)
+    for(int vRowCount = 0; vRowCount < oCurrentDisplayConfig.getRowCount(); ++vRowCount)
     {
-      oTileEventArgsPane.add(vMenuConfig.getRowNode(vRowCount), 0, vRowCount);
+      oTileEventArgsPane.add(oCurrentDisplayConfig.getRowNode(vRowCount), 0, vRowCount);
     }
     
     if(oTileEvent != null)
     {
-      vMenuConfig.setTextFieldArgValues(oTileEvent.getTileEventArgs());
+      oCurrentDisplayConfig.setTextFieldArgValues(oTileEvent.getTileEventArgs());
     }
   }
   
@@ -164,7 +162,16 @@ public class EditableTileEventsMenu extends BorderPane
     vTileEventName = pTileEvent.getEventName();
     
     oTileEventsList.getSelectionModel().select(vTileEventName);
-    displayMenu(vTileEventName);
+    
+    setCurrentDisplayConfig(vTileEventName);
+    
+    displayMenu();
+  }
+  
+  
+  private void setCurrentDisplayConfig(String pEventName)
+  {
+    oCurrentDisplayConfig = oDisplayConfigs.get(pEventName);
   }
   
   
@@ -173,7 +180,7 @@ public class EditableTileEventsMenu extends BorderPane
     oTileEventsList.getSelectionModel().clearSelection();
     
     oEventClassTextField.clear();
-    
+    oCurrentDisplayConfig.clearTextFieldArgValues();
     SceneUtils.clearPane(oTileEventArgsPane);
     
     oTileEvent = null;
@@ -192,7 +199,16 @@ public class EditableTileEventsMenu extends BorderPane
       
       if(vEventName != null)
       { 
-        displayMenu(vEventName);
+        
+        setCurrentDisplayConfig(vEventName);
+        
+        if(oTileEvent != null)
+        {
+          oCurrentDisplayConfig.clearTextFieldArgValues();
+          oTileEvent = null;
+        }
+        
+        displayMenu();
       }
     }
   }

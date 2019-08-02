@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -84,6 +85,15 @@ public class MoveEventDisplayConfig implements TileEventDisplayConfig
       vTextField    = oTextFields.get(vIndex);
       
       vTextField.setText(vTileEventArg.getArgValue());
+    }
+  }
+  
+  
+  public void clearTextFieldArgValues()
+  {
+    for(TextField vTextField : oTextFields)
+    {
+      vTextField.clear();
     }
   }
   

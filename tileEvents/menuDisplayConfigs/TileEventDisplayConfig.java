@@ -14,5 +14,6 @@ public interface TileEventDisplayConfig
   public int getRowCount();
   
   public void setTextFieldArgValues(ArrayList<TileEventArg> pTileEventArgs);
+  public void clearTextFieldArgValues();
 
 }
