@@ -2,12 +2,12 @@ package com.game.tileEditor;
 
 import java.util.ArrayList;
 
+import com.game.tileEditor.tileEvents.TileEvent;
 import com.game.utilities.SceneUtils;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import tileEvents.TileEvent;
 
 public class Tile extends StackPane
 {

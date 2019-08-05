@@ -1,4 +1,4 @@
-package tileEvents;
+package com.game.tileEditor.tileEvents;
 
 public class TileEventArg 
 {

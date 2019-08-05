@@ -1,4 +1,4 @@
-package tileEvents;
+package com.game.tileEditor.tileEvents;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,6 +18,12 @@ public class MoveEvent implements TileEvent
   }
   
   
+  public String getEventClassName()
+  {
+    return oEventClassName;
+  }
+  
+  
   public String getEventName()
   {
     return EVENT_NAME;
@@ -30,15 +36,19 @@ public class MoveEvent implements TileEvent
   }
   
   
-  public TileEventArg createTileEventArg(String pClassType, String pValue)
+  public void setTileEventArgs(ArrayList<TileEventArg> pTileEventArgs)
+  {
+    oTileEventArgs = pTileEventArgs;
+  }
+  
+  
+  public void addTileEventArg(String pClassType, String pValue)
   {
     TileEventArg vTileEventArg = null;
     
     vTileEventArg = new TileEventArg(pClassType, pValue);
     
     oTileEventArgs.add(vTileEventArg);
-    
-    return vTileEventArg;
   }
   
   

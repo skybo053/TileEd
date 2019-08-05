@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 import com.game.eventHandlers.ExitHandler;
 import com.game.eventHandlers.NewProjectHandler;
+import com.game.tileEditor.tileEvents.MoveEvent;
+import com.game.tileEditor.tileEvents.TileEvent;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -23,8 +25,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import tileEvents.MoveEvent;
-import tileEvents.TileEvent;
 
 
 public class TileEditor extends Application
@@ -277,14 +277,14 @@ public class TileEditor extends Application
       
       
       vMoveEvent  = new MoveEvent("com.game.TileEvents.events.MoveEvent");
-      vMoveEvent.createTileEventArg("java.lang.Integer", "5");
-      vMoveEvent.createTileEventArg("java.lang.Integer", "11");
+      vMoveEvent.addTileEventArg("java.lang.Integer", "5");
+      vMoveEvent.addTileEventArg("java.lang.Integer", "11");
  
       vTile.addTileEvent(vMoveEvent);
       
       vMoveEvent  = new MoveEvent("com.game.TileEvents.events.OTHEREvent");
-      vMoveEvent.createTileEventArg("java.lang.Integer", "100");
-      vMoveEvent.createTileEventArg("java.lang.Integer", "999");
+      vMoveEvent.addTileEventArg("java.lang.Integer", "100");
+      vMoveEvent.addTileEventArg("java.lang.Integer", "999");
       
       vTile.addTileEvent(vMoveEvent);
       

@@ -2,6 +2,8 @@ package com.game.tileEditor;
 
 import java.util.ArrayList;
 
+import com.game.tileEditor.tileEvents.TileEvent;
+
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -12,7 +14,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Popup;
-import tileEvents.TileEvent;
 
 
 public class TileMenu extends GridPane

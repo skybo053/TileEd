@@ -3,6 +3,7 @@ package com.game.tileEditor;
 
 import java.util.ArrayList;
 
+import com.game.tileEditor.tileEvents.TileEvent;
 import com.game.utilities.SceneUtils;
 
 import javafx.collections.ObservableList;
@@ -23,7 +24,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import tileEvents.TileEvent;
 
 
 public class EditableTileMenu extends GridPane
@@ -78,7 +78,7 @@ public class EditableTileMenu extends GridPane
     oTileEventsList = new ListView<TileEvent>();
     
     oEditableTileEventsMenuStage = new Stage();
-    oEditableTileEventsMenu      = new EditableTileEventsMenu();
+    oEditableTileEventsMenu      = new EditableTileEventsMenu(oTileEditor);
     
     oIsSolidLabel.setPadding(   new Insets(0,15,0,5));
     oImageViewLabel.setPadding( new Insets(0,15,0,5));
