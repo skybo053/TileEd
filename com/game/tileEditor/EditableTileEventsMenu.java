@@ -1,5 +1,7 @@
 package com.game.tileEditor;
 
+import java.util.ArrayList;
+
 import com.game.tileEditor.tileEvents.TileEvent;
 import com.game.tileEditor.tileEvents.TileEventArg;
 import com.game.utilities.SceneUtils;
@@ -7,6 +9,7 @@ import com.game.utilities.SceneUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -22,8 +25,12 @@ public class EditableTileEventsMenu extends BorderPane
   private static final double PANE_WIDTH  = 600.0;
   private static final double PANE_HEIGHT = 400.0;
   
-  private TileEvent  oTileEvent  = null;
-  private TileEditor oTileEditor = null;
+  private static final String ADD_TILEEVENT_BUTTON_TEXT    = "Add Event";
+  private static final String UPDATE_TILEEVENT_BUTTON_TEXT = "Update Event";
+  
+  private TileEvent        oTileEvent        = null;
+  private TileEditor       oTileEditor       = null;
+  private EditableTileMenu oEditableTileMenu = null;
   
   private FlowPane   oTileEventClassPane      = null;
   private FlowPane   oTileEventArgsPane       = null;
@@ -34,23 +41,25 @@ public class EditableTileEventsMenu extends BorderPane
   private Button     oAddUpdateButton         = null;
   private Button     oDeleteButton            = null;
   private Button     oAddArgButton            = null;
+  private Button     oNewEventButton          = null;
   
   
-  public EditableTileEventsMenu(TileEditor pTileEditor)
+  public EditableTileEventsMenu(TileEditor pTileEditor, EditableTileMenu pEditableTileMenu)
   {
     setPrefWidth(PANE_WIDTH);
     setPrefHeight(PANE_HEIGHT);
     
-    oTileEditor = pTileEditor;
+    oTileEditor       = pTileEditor;
+    oEditableTileMenu = pEditableTileMenu;
     
     oTileEventClassPane      = new FlowPane();
     oTileEventArgsPane       = new FlowPane();
     oTileEventArgsScrollPane = new ScrollPane();
     oButtonsPane             = new FlowPane();
-    oAddUpdateButton         = new Button("Add/Update TileEvent");
+    oAddUpdateButton         = new Button(ADD_TILEEVENT_BUTTON_TEXT);
     oDeleteButton            = new Button("Delete TileEvent");
     oAddArgButton            = new Button("Add Argument");
-    
+    oNewEventButton          = new Button("Add New Event");
     oEventClassLabel         = new Label("Event Class Name: ");
     
     oEventClassTextField     = new TextField();
@@ -67,9 +76,17 @@ public class EditableTileEventsMenu extends BorderPane
   
   private void configureButtons()
   {
+    disableButton(oDeleteButton, true);
+    disableButton(oNewEventButton, true);
+    
     oAddArgButton.setOnMouseClicked(pMouseEvent -> 
     {
       createArgumentPane();
+    });
+    
+    oNewEventButton.setOnMouseClicked(pEvent -> 
+    {
+      clearMenu();
     });
     
     oAddUpdateButton.setOnMouseClicked(new AddUpdateButtonClickHandler());
@@ -83,11 +100,14 @@ public class EditableTileEventsMenu extends BorderPane
     
     FlowPane.setMargin(oAddUpdateButton, new Insets(0,5,0,0));
     FlowPane.setMargin(oDeleteButton, new Insets(0,5,0,5));
-    FlowPane.setMargin(oAddArgButton, new Insets(0,0,0,5));
+    FlowPane.setMargin(oAddArgButton, new Insets(0,5,0,5));
+    FlowPane.setMargin(oNewEventButton, new Insets(0,0,0,5));
+    
     
     SceneUtils.addToPane(oButtonsPane, oAddUpdateButton);
     SceneUtils.addToPane(oButtonsPane, oDeleteButton);
     SceneUtils.addToPane(oButtonsPane, oAddArgButton);
+    SceneUtils.addToPane(oButtonsPane, oNewEventButton);
   }
   
   
@@ -134,6 +154,9 @@ public class EditableTileEventsMenu extends BorderPane
     oTileEvent = pTileEvent;
     
     oEventClassTextField.setText(oTileEvent.getEventClassName());
+    setButtonText(oAddUpdateButton, UPDATE_TILEEVENT_BUTTON_TEXT);
+    disableButton(oDeleteButton, false);
+    disableButton(oNewEventButton, false);
     
     for(TileEventArg vTileEventArg : oTileEvent.getTileEventArgs())
     {
@@ -148,8 +171,26 @@ public class EditableTileEventsMenu extends BorderPane
   public void clearMenu()
   {
     oEventClassTextField.clear();
+    
     SceneUtils.clearPane(oTileEventArgsPane);
+    
+    setButtonText(oAddUpdateButton, ADD_TILEEVENT_BUTTON_TEXT);
+    disableButton(oDeleteButton, true);
+    disableButton(oNewEventButton, true);
+    
     oTileEvent = null;
+  }
+  
+  
+  private void disableButton(Button pButton, boolean pDisable)
+  {
+    pButton.setDisable(pDisable);
+  }
+  
+  
+  private void setButtonText(Button pButton, String pText)
+  {
+    pButton.setText(pText);
   }
   
   
@@ -157,7 +198,75 @@ public class EditableTileEventsMenu extends BorderPane
   {
     public void handle(MouseEvent pMouseEvent)
     {
+      ArgumentHBox            vArgumentHBox  = null;
+      ArrayList<TileEventArg> vTileEventArgs = null;
+      ArrayList<TileEvent>    vTileEvents    = null;
+      TileEvent               vTileEvent     = null;
+      String                  vEventClass    = null;
+      String                  vEventName     = null;
       
+      if(oTileEventArgsPane.getChildren().size() == 0)
+      {
+        return;
+      }
+    
+      vTileEventArgs = new ArrayList<TileEventArg>();
+      vEventClass    = oEventClassTextField.getText();
+      vEventName     = parseEventName(vEventClass);
+      
+      for(Node vNode : oTileEventArgsPane.getChildren())
+      {
+        String vArgClassType = null;
+        String vArgValue     = null;
+        
+        vArgumentHBox = (ArgumentHBox)vNode;
+        
+        vArgClassType = vArgumentHBox.getArgumentClassText();
+        vArgValue     = vArgumentHBox.getArgumentValueText();
+        
+        vTileEventArgs.add(new TileEventArg(vArgClassType, vArgValue));
+      }
+      
+      if(oTileEvent != null)
+      {
+        oTileEvent.setTileEventArgs(vTileEventArgs);
+        oTileEvent.setEventClassName(vEventClass);
+        oTileEvent.setEventName(vEventName);
+      }
+      else
+      {
+        vTileEvent = new TileEvent(vEventClass, vEventName);
+        vTileEvent.setTileEventArgs(vTileEventArgs);
+        oTileEditor.addTileEvent(vTileEvent);
+      }
+      
+      oEditableTileMenu.closeEditableTileEventsMenu();
+      oTileEditor.updateTileEventListViews();
+      clearMenu();
+    }
+  }
+  
+  
+  private String parseEventName(String pEventClassName)
+  {
+    String vEventName = null;
+    
+    try
+    {
+      if(pEventClassName.contains(".") == false)
+      {
+        return pEventClassName;
+      }
+      else
+      {
+        vEventName = pEventClassName.substring(pEventClassName.lastIndexOf(".") + 1);
+        
+        return vEventName;
+      }
+    }
+    catch(StringIndexOutOfBoundsException pIndexOutOfBoundsException)
+    {
+      return pEventClassName;
     }
   }
   
@@ -196,9 +305,21 @@ public class EditableTileEventsMenu extends BorderPane
     }
     
     
+    private String getArgumentClassText()
+    {
+      return oArgClassTextField.getText();
+    }
+    
+    
     private void setArgumentValueTextField(String pArgumentValue)
     {
       oArgValueTextField.setText(pArgumentValue);
+    }
+    
+    
+    private String getArgumentValueText()
+    {
+      return oArgValueTextField.getText();
     }
   }
   

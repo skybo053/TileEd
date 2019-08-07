@@ -78,7 +78,7 @@ public class EditableTileMenu extends GridPane
     oTileEventsList = new ListView<TileEvent>();
     
     oEditableTileEventsMenuStage = new Stage();
-    oEditableTileEventsMenu      = new EditableTileEventsMenu(oTileEditor);
+    oEditableTileEventsMenu      = new EditableTileEventsMenu(oTileEditor, this);
     
     oIsSolidLabel.setPadding(   new Insets(0,15,0,5));
     oImageViewLabel.setPadding( new Insets(0,15,0,5));
@@ -103,7 +103,7 @@ public class EditableTileMenu extends GridPane
   
   private void configureTileEventsListView()
   {
-    oTileEventsList.setPrefHeight(50.0);
+    oTileEventsList.setPrefHeight(75.0);
     oTileEventsList.setPrefWidth(95.0);
     oTileEventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     oTileEventsList.setOnMouseClicked(new TileEventListViewHandler());
@@ -280,10 +280,8 @@ public class EditableTileMenu extends GridPane
     
     pTileEventList = oTileEventsList.getItems();
     
-    for(TileEvent pTileEvent : pTileEvents)
-    {
-      pTileEventList.add(pTileEvent);
-    }
+    pTileEventList.clear();
+    pTileEventList.addAll(pTileEvents);
   }
   
   
@@ -297,6 +295,12 @@ public class EditableTileMenu extends GridPane
     {
       return true;
     }
+  }
+  
+  
+  public void closeEditableTileEventsMenu()
+  {
+    oEditableTileEventsMenuStage.close();
   }
   
   

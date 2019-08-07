@@ -118,7 +118,7 @@ public class TileMenu extends GridPane
   
   private void configureTileEventsListView()
   {
-    oTileEventsList.setPrefHeight(50.0);
+    oTileEventsList.setPrefHeight(75.0);
     oTileEventsList.setPrefWidth(95.0);
     oTileEventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     oTileEventsList.setOnMouseClicked(new TileEventListViewHandler());
@@ -214,10 +214,8 @@ public class TileMenu extends GridPane
     
     pTileEventList = oTileEventsList.getItems();
     
-    for(TileEvent pTileEvent : pTileEvents)
-    {
-      pTileEventList.add(pTileEvent);
-    }
+    pTileEventList.clear();
+    pTileEventList.addAll(pTileEvents);
   }
   
   
@@ -228,19 +226,18 @@ public class TileMenu extends GridPane
       ListView<TileEvent>  vTileEventsListView   = null;
       TileEvent            vTileEvent            = null;
       
+      vTileEvent  = oTileEventsList.getSelectionModel().getSelectedItem();
+      
       closeTileEventsPopup();
       
       if(pMouseEvent.getClickCount() == 2)
       {
-        vTileEventsListView = (ListView<TileEvent>)pMouseEvent.getSource();
-        vTileEvent          = vTileEventsListView.getSelectionModel().getSelectedItem();
-        
         if(vTileEvent != null)
         {
           oTileEventsLabel.setText(vTileEvent.toDisplayString());
           
           oTileEventsPopup.show(
-              vTileEventsListView, 
+              oTileEventsList, 
               pMouseEvent.getScreenX() - LABEL_OFFSET, 
               pMouseEvent.getScreenY());
         }

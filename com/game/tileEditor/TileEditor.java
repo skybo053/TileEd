@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import com.game.eventHandlers.ExitHandler;
 import com.game.eventHandlers.NewProjectHandler;
-import com.game.tileEditor.tileEvents.MoveEvent;
+import com.game.tileEditor.tileEvents.TileEvent;
 import com.game.tileEditor.tileEvents.TileEvent;
 
 import javafx.application.Application;
@@ -276,17 +276,17 @@ public class TileEditor extends Application
           "dirt");
       
       
-      vMoveEvent  = new MoveEvent("com.game.TileEvents.events.MoveEvent");
+      vMoveEvent  = new TileEvent("com.game.TileEvents.events.MoveEvent", "MoveEvent");
       vMoveEvent.addTileEventArg("java.lang.Integer", "5");
       vMoveEvent.addTileEventArg("java.lang.Integer", "11");
  
       vTile.addTileEvent(vMoveEvent);
       
-      vMoveEvent  = new MoveEvent("com.game.TileEvents.events.OTHEREvent");
+      /*vMoveEvent  = new TileEvent("com.game.TileEvents.events.OTHEREvent", "OtherEvent");
       vMoveEvent.addTileEventArg("java.lang.Integer", "100");
       vMoveEvent.addTileEventArg("java.lang.Integer", "999");
       
-      vTile.addTileEvent(vMoveEvent);
+      vTile.addTileEvent(vMoveEvent);*/
       
       vTile.setOnMouseClicked(new TileClickHandler());
       
@@ -298,6 +298,12 @@ public class TileEditor extends Application
     {
      System.out.println(e.getMessage());
     }
+  }
+  
+  
+  public void addTileEvent(TileEvent pTileEvent)
+  {
+    oCurrentTile.addTileEvent(pTileEvent);
   }
   
   
@@ -351,6 +357,23 @@ public class TileEditor extends Application
     oEditableTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
     oEditableTileMenu.setImageView(oCurrentTile.getTileImage());
     oEditableTileMenu.setTileEvents(oCurrentTile.getTileEvents());
+  }
+  
+  
+  public void setCurrentTileTileEvents(ArrayList<TileEvent> pTileEvents)
+  {
+    oCurrentTile.setTileEvents(pTileEvents);
+  }
+  
+  
+  public void updateTileEventListViews()
+  {
+    ArrayList<TileEvent> vTileEvents = null;
+    
+    vTileEvents = oCurrentTile.getTileEvents();
+    
+    oTileMenu.setTileEvents(vTileEvents);
+    oEditableTileMenu.setTileEvents(vTileEvents);
   }
   
   
