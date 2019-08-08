@@ -30,7 +30,6 @@ public class EditableTileEventsMenu extends BorderPane
   
   private TileEvent        oTileEvent        = null;
   private TileEditor       oTileEditor       = null;
-  private EditableTileMenu oEditableTileMenu = null;
   
   private FlowPane   oTileEventClassPane      = null;
   private FlowPane   oTileEventArgsPane       = null;
@@ -44,13 +43,12 @@ public class EditableTileEventsMenu extends BorderPane
   private Button     oNewEventButton          = null;
   
   
-  public EditableTileEventsMenu(TileEditor pTileEditor, EditableTileMenu pEditableTileMenu)
+  public EditableTileEventsMenu(TileEditor pTileEditor)
   {
     setPrefWidth(PANE_WIDTH);
     setPrefHeight(PANE_HEIGHT);
     
     oTileEditor       = pTileEditor;
-    oEditableTileMenu = pEditableTileMenu;
     
     oTileEventClassPane      = new FlowPane();
     oTileEventArgsPane       = new FlowPane();
@@ -78,6 +76,14 @@ public class EditableTileEventsMenu extends BorderPane
   {
     disableButton(oDeleteButton, true);
     disableButton(oNewEventButton, true);
+    
+    oDeleteButton.setOnMouseClicked(pMouseEvent ->
+    {
+      oTileEditor.removeTileEvent(oTileEvent);
+      oTileEditor.updateTileEventListViews();
+      
+      clearMenu();
+    });
     
     oAddArgButton.setOnMouseClicked(pMouseEvent -> 
     {
@@ -240,9 +246,8 @@ public class EditableTileEventsMenu extends BorderPane
         oTileEditor.addTileEvent(vTileEvent);
       }
       
-      oEditableTileMenu.closeEditableTileEventsMenu();
-      oTileEditor.updateTileEventListViews();
       clearMenu();
+      oTileEditor.updateTileEventListViews();
     }
   }
   

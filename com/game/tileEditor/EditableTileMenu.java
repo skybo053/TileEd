@@ -78,7 +78,7 @@ public class EditableTileMenu extends GridPane
     oTileEventsList = new ListView<TileEvent>();
     
     oEditableTileEventsMenuStage = new Stage();
-    oEditableTileEventsMenu      = new EditableTileEventsMenu(oTileEditor, this);
+    oEditableTileEventsMenu      = new EditableTileEventsMenu(oTileEditor);
     
     oIsSolidLabel.setPadding(   new Insets(0,15,0,5));
     oImageViewLabel.setPadding( new Insets(0,15,0,5));
@@ -335,6 +335,10 @@ public class EditableTileMenu extends GridPane
           else if(GridPane.getRowIndex(vClickedPane) == 1)
           {
             oTileEditor.showLoadedImagesMenu();
+          }
+          else if(GridPane.getRowIndex(vClickedPane) == 2)
+          {
+            oEditableTileEventsMenuStage.show();
           }
         }
       }

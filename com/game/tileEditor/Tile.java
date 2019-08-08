@@ -160,6 +160,15 @@ public class Tile extends StackPane
   }
   
   
+  public void deleteTileEvent(TileEvent pTileEvent)
+  {
+    oTileEvents.removeIf(pExistingTileEvent ->
+    {
+      return pExistingTileEvent == pTileEvent;
+    });
+  }
+  
+  
   public ArrayList<TileEvent> getTileEvents()
   {
     return oTileEvents;

@@ -301,6 +301,12 @@ public class TileEditor extends Application
   }
   
   
+  public void removeTileEvent(TileEvent pTileEvent)
+  {
+    oCurrentTile.deleteTileEvent(pTileEvent);
+  }
+  
+  
   public void addTileEvent(TileEvent pTileEvent)
   {
     oCurrentTile.addTileEvent(pTileEvent);
