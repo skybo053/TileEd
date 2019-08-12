@@ -84,6 +84,26 @@ public class AddRemoveTilesMenu extends GridPane
     {
       oTileEditor.deleteTileColumn();
     });
+    
+    disableButtons();
+  }
+  
+  
+  public void disableButtons()
+  {
+    oAddRowButton.setDisable(true);
+    oDeleteRowButton.setDisable(true);
+    oAddColumnButton.setDisable(true);
+    oDeleteColumnButton.setDisable(true);
+  }
+  
+  
+  public void enableButtons()
+  {
+    oAddRowButton.setDisable(false);
+    oDeleteRowButton.setDisable(false);
+    oAddColumnButton.setDisable(false);
+    oDeleteColumnButton.setDisable(false);
   }
   
   

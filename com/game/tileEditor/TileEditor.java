@@ -220,6 +220,8 @@ public class TileEditor extends Application
       oMainGridPane.addRow(vCurrentRow, vTiles.toArray(new Node[vTiles.size()]));
     }
     
+    oAddRemoveTilesMenu.enableButtons();
+    
     oMapGridRows    = pTotalRows;
     oMapGridColumns = pTotalColumns;
   }
@@ -309,19 +311,30 @@ public class TileEditor extends Application
   
   public void decrementMapGridRowCount()
   {
-    if(oMapGridRows != 0)
+    if(--oMapGridRows == 0)
     {
-      --oMapGridRows;
+      resetColumnAndRowCount();
+      
+      oAddRemoveTilesMenu.disableButtons();
     }
   }
   
   
   public void decrementMapGridColumnCount()
   {
-    if(oMapGridColumns != 0)
+    if(--oMapGridColumns == 0)
     {
-      --oMapGridColumns;
+      resetColumnAndRowCount();
+      
+      oAddRemoveTilesMenu.disableButtons();
     }
+  }
+  
+  
+  private void resetColumnAndRowCount()
+  {
+    oMapGridRows    = 0;
+    oMapGridColumns = 0;
   }
   
   
