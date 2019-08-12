@@ -1,11 +1,10 @@
 package com.game.tileEditor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 
 import com.game.eventHandlers.ExitHandler;
 import com.game.eventHandlers.NewProjectHandler;
-import com.game.tileEditor.tileEvents.TileEvent;
 import com.game.tileEditor.tileEvents.TileEvent;
 
 import javafx.application.Application;
@@ -40,24 +39,29 @@ public class TileEditor extends Application
   public  static final int    TILE_PANE_LENGTH   = 37;
   public  static final int    TILE_IMAGE_LENGTH  = 35;
   
-  private Scene            oScene                     = null;
-  private MenuBar          oMenuBar                   = null;
-  private Menu             oFileMenu                  = null;
-  private BorderPane       oMainBorderPane            = null;
-  private ScrollPane       oMainScrollPane            = null;
-  private GridPane         oMainGridPane              = null;
-  private TileMenu         oTileMenu                  = null;
-  private EditableTileMenu oEditableTileMenu          = null;
-  private FlowPane         oSideFlowPane              = null;
-  private TitledPane       oTileAttribsTitledPane     = null;
-  private TitledPane       oEditTileAttribsTitledPane = null;
-  private Scene            oLoadedImagesMenuScene     = null;
-  private LoadedImagesMenu oLoadedImagesMenu          = null;
-  private Stage            oLoadedImagesMenuStage     = null;
+  private Scene              oScene                     = null;
+  private MenuBar            oMenuBar                   = null;
+  private Menu               oFileMenu                  = null;
+  private BorderPane         oMainBorderPane            = null;
+  private ScrollPane         oMainScrollPane            = null;
+  private GridPane           oMainGridPane              = null;
+  private TileMenu           oTileMenu                  = null;
+  private EditableTileMenu   oEditableTileMenu          = null;
+  private AddRemoveTilesMenu oAddRemoveTilesMenu        = null;
+  private FlowPane           oSideFlowPane              = null;
+  private TitledPane         oTileAttribsTitledPane     = null;
+  private TitledPane         oEditTileAttribsTitledPane = null;
+  private TitledPane         oAddRemoveTilesTitledPane  = null;
+  private Scene              oLoadedImagesMenuScene     = null;
+  private LoadedImagesMenu   oLoadedImagesMenu          = null;
+  private Stage              oLoadedImagesMenuStage     = null;
   
   private Tile oCurrentTile  = null;
   private Tile oPreviousTile = null;
 
+  private int oMapGridRows    = 0;
+  private int oMapGridColumns = 0;
+  
   
   public static void main(String[] pArgs) 
   {
@@ -91,9 +95,11 @@ public class TileEditor extends Application
     oMainScrollPane            = new ScrollPane();
     oTileMenu                  = new TileMenu(this);
     oEditableTileMenu          = new EditableTileMenu(this);
+    oAddRemoveTilesMenu        = new AddRemoveTilesMenu(this);
     oSideFlowPane              = new FlowPane();
     oTileAttribsTitledPane     = new TitledPane();
     oEditTileAttribsTitledPane = new TitledPane();
+    oAddRemoveTilesTitledPane  = new TitledPane();
     
     buildMenu();
     configureLoadedImagesMenuStage();
@@ -102,6 +108,7 @@ public class TileEditor extends Application
     configureSideFlowPane();
     configureTileAttribTitlePane();
     configureEditTileAttribsTitlePane();
+    configureAddRemoveTilesTitlePane();
   }
   
   
@@ -135,8 +142,10 @@ public class TileEditor extends Application
   {
     oScene = new Scene(oMainBorderPane);
     
-    oSideFlowPane.getChildren().add(oTileAttribsTitledPane);
-    oSideFlowPane.getChildren().add(oEditTileAttribsTitledPane);
+    oSideFlowPane.getChildren().addAll(
+        oTileAttribsTitledPane, 
+        oEditTileAttribsTitledPane,
+        oAddRemoveTilesTitledPane);
     
     oMainScrollPane.setContent(oMainGridPane);
     
@@ -184,6 +193,9 @@ public class TileEditor extends Application
   public void clearMapGrid()
   {
     oMainGridPane.getChildren().clear();
+    
+    oMapGridRows    = 0;
+    oMapGridColumns = 0;
   }
   
   
@@ -206,6 +218,109 @@ public class TileEditor extends Application
       }
       
       oMainGridPane.addRow(vCurrentRow, vTiles.toArray(new Node[vTiles.size()]));
+    }
+    
+    oMapGridRows    = pTotalRows;
+    oMapGridColumns = pTotalColumns;
+  }
+  
+  
+  public void addTileRow()
+  {
+    ArrayList<Tile> vTilesToAdd = null;
+    
+    vTilesToAdd = new ArrayList<Tile>();
+    
+    for(int vCount = 0; vCount < oMapGridColumns; ++vCount)
+    {
+      vTilesToAdd.add(new Tile());
+    }
+    
+    oMainGridPane.addRow(oMapGridRows, vTilesToAdd.toArray(new Node[vTilesToAdd.size()]));
+    
+    incrementMapGridRowCount();
+  }
+  
+  
+  public void addTileColumn()
+  {
+    ArrayList<Tile> vTilesToAdd = null;
+    
+    vTilesToAdd = new ArrayList<Tile>();
+    
+    for(int vCount = 0; vCount < oMapGridRows; ++vCount)
+    {
+      vTilesToAdd.add(new Tile());
+    }
+    
+    oMainGridPane.addColumn(oMapGridColumns, vTilesToAdd.toArray(new Node[vTilesToAdd.size()]));
+    
+    incrementMapGridColumnCount();
+  }
+  
+  
+  public void deleteTileRow()
+  {
+    Node vNode = null;
+    
+    for(Iterator<Node> vIterator = oMainGridPane.getChildren().iterator(); vIterator.hasNext();)
+    {
+      vNode = vIterator.next();
+      
+      if(GridPane.getRowIndex(vNode) == (oMapGridRows - 1))
+      {
+        vIterator.remove();
+      }
+    }
+    
+    decrementMapGridRowCount();
+  }
+  
+  
+  public void deleteTileColumn()
+  {
+    Node vNode = null;
+    
+    for(Iterator<Node> vIterator = oMainGridPane.getChildren().iterator(); vIterator.hasNext();)
+    {
+      vNode = vIterator.next();
+      
+      if(GridPane.getColumnIndex(vNode) == (oMapGridColumns - 1))
+      {
+        vIterator.remove();
+      }
+    }
+    
+    decrementMapGridColumnCount();
+  }
+  
+  
+  public void incrementMapGridRowCount()
+  {
+    ++oMapGridRows;
+  }
+  
+  
+  public void incrementMapGridColumnCount()
+  {
+    ++oMapGridColumns;
+  }
+  
+  
+  public void decrementMapGridRowCount()
+  {
+    if(oMapGridRows != 0)
+    {
+      --oMapGridRows;
+    }
+  }
+  
+  
+  public void decrementMapGridColumnCount()
+  {
+    if(oMapGridColumns != 0)
+    {
+      --oMapGridColumns;
     }
   }
   
@@ -332,6 +447,14 @@ public class TileEditor extends Application
     oEditTileAttribsTitledPane.setContent(oEditableTileMenu);
     oEditTileAttribsTitledPane.setText("Edit Tile");
     oEditTileAttribsTitledPane.setPrefWidth(SIDE_PANE_WIDTH);
+  }
+  
+  
+  private void configureAddRemoveTilesTitlePane()
+  {
+    oAddRemoveTilesTitledPane.setContent(oAddRemoveTilesMenu);
+    oAddRemoveTilesTitledPane.setText("Add/Remove Tiles");
+    oAddRemoveTilesTitledPane.setPrefWidth(SIDE_PANE_WIDTH);
   }
   
   
