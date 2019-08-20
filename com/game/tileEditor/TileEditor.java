@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.game.eventHandlers.ExitHandler;
+import com.game.eventHandlers.LoadMenuHandler;
 import com.game.eventHandlers.NewProjectHandler;
 import com.game.tileEditor.tileEvents.TileEvent;
 
@@ -24,6 +25,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 
 public class TileEditor extends Application
@@ -163,6 +165,19 @@ public class TileEditor extends Application
     
     oScene.getStylesheets().add(STYLE_SHEET);
   }
+  
+  
+  public Window getMainSceneWindow()
+  {
+    if(oScene == null)
+    {
+      return null;
+    }
+    else
+    {
+      return oScene.getWindow();
+    }
+  }
 
 
   private void buildMenu()
@@ -180,6 +195,7 @@ public class TileEditor extends Application
     vMenuItems.add(vMenuItem);
     
     vMenuItem = new MenuItem("Load");
+    vMenuItem.setOnAction(new LoadMenuHandler(this));
     vMenuItems.add(vMenuItem);
     
     vMenuItem = new MenuItem("Quit");
