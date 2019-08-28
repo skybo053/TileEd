@@ -6,7 +6,9 @@ import java.util.Iterator;
 import com.game.eventHandlers.ExitHandler;
 import com.game.eventHandlers.LoadMenuHandler;
 import com.game.eventHandlers.NewProjectHandler;
+import com.game.eventHandlers.TileClickHandler;
 import com.game.tileEditor.tileEvents.TileEvent;
+import com.game.utilities.SceneUtils;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -32,8 +34,8 @@ public class TileEditor extends Application
 {
   private static final String TITLE              = "TEd 1.0.0";
   private static final String STYLE_SHEET        = "file:Resources/CSS/stylesheet.css";
-  private static final String SELECTED_GRID_CELL = "selected-grid-cell";
-  private static final String GRID_CELL          = "grid-cell";
+  public  static final String SELECTED_GRID_CELL = "selected-grid-cell";
+  public  static final String GRID_CELL          = "grid-cell";
   private static final String SIDE_PANE          = "side-border-pane";
   private static final double SCENE_WIDTH        = 1000.0;
   private static final double SCENE_HEIGHT       = 800.0;
@@ -57,6 +59,7 @@ public class TileEditor extends Application
   private Scene              oLoadedImagesMenuScene     = null;
   private LoadedImagesMenu   oLoadedImagesMenu          = null;
   private Stage              oLoadedImagesMenuStage     = null;
+  private TileClickHandler   oTileClickHandler          = null;
   
   private Tile oCurrentTile  = null;
   private Tile oPreviousTile = null;
@@ -102,6 +105,7 @@ public class TileEditor extends Application
     oTileAttribsTitledPane     = new TitledPane();
     oEditTileAttribsTitledPane = new TitledPane();
     oAddRemoveTilesTitledPane  = new TitledPane();
+    oTileClickHandler          = new TileClickHandler(this);
     
     buildMenu();
     configureLoadedImagesMenuStage();
@@ -208,7 +212,7 @@ public class TileEditor extends Application
   
   public void clearMapGrid()
   {
-    oMainGridPane.getChildren().clear();
+    SceneUtils.clearPane(oMainGridPane);
     
     oMapGridRows    = 0;
     oMapGridColumns = 0;
@@ -228,7 +232,7 @@ public class TileEditor extends Application
       {
         vTile  = new Tile();
         
-        vTile.setOnMouseClicked(new TileClickHandler());
+        vTile.setOnMouseClicked(oTileClickHandler);
         
         vTiles.add(vTile);
       }
@@ -236,10 +240,34 @@ public class TileEditor extends Application
       oMainGridPane.addRow(vCurrentRow, vTiles.toArray(new Node[vTiles.size()]));
     }
     
-    oAddRemoveTilesMenu.enableButtons();
+    enableAddRemoveTileButtons();
     
     oMapGridRows    = pTotalRows;
     oMapGridColumns = pTotalColumns;
+  }
+  
+  
+  public void enableAddRemoveTileButtons()
+  {
+    oAddRemoveTilesMenu.enableButtons();
+  }
+  
+  
+  public void setMapGridRowCount(int pMapGridRows)
+  {
+    oMapGridRows = pMapGridRows;
+  }
+  
+  
+  public void setMapGridColumnCount(int pMapGridColumns)
+  {
+    oMapGridColumns = pMapGridColumns;
+  }
+  
+  
+  public void addLoadedMapRow(ArrayList<Tile> pTileRow, int pRowIndex)
+  {
+    oMainGridPane.addRow(pRowIndex, pTileRow.toArray(new Node[pTileRow.size()]));
   }
   
   
@@ -401,7 +429,7 @@ public class TileEditor extends Application
       
       vTile   = new Tile();
       
-      vTile.setOnMouseClicked(new TileClickHandler());
+      vTile.setOnMouseClicked(oTileClickHandler);
       
       vImages.add(vTile);
        
@@ -410,7 +438,7 @@ public class TileEditor extends Application
           "file:Resources/Images/water.png",
           "water");
       
-      vTile.setOnMouseClicked(new TileClickHandler());
+      vTile.setOnMouseClicked(oTileClickHandler);
       
       vImages.add(vTile);
        
@@ -432,7 +460,7 @@ public class TileEditor extends Application
       
       vTile.addTileEvent(vMoveEvent);*/
       
-      vTile.setOnMouseClicked(new TileClickHandler());
+      vTile.setOnMouseClicked(oTileClickHandler);
       
       vImages.add(vTile);
        
@@ -487,7 +515,7 @@ public class TileEditor extends Application
   }
   
   
-  private void displayCurrentTileConfig()
+  public void displayCurrentTileConfig()
   {
     Integer vRowIndex   = null;
     Integer vColIndex   = null;
@@ -510,7 +538,7 @@ public class TileEditor extends Application
   }
 
   
-  private void displayEditableTileConfig()
+  public void displayEditableTileConfig()
   {
     oEditableTileMenu.setIsSolid(oCurrentTile.isSolid().toString());
     oEditableTileMenu.setImageView(oCurrentTile.getTileImage());
@@ -550,6 +578,42 @@ public class TileEditor extends Application
   }
   
   
+  public void setCurrentTile(Tile pCurrentTile)
+  {
+    oCurrentTile = pCurrentTile;
+  }
+  
+  
+  public Tile getPreviousTile()
+  {
+    return oPreviousTile;
+  }
+  
+  
+  public void setPreviousTile(Tile pPreviousTile)
+  {
+    oPreviousTile = pPreviousTile;
+  }
+  
+  
+  public void clearTileMenuAttributeValues()
+  {
+    oTileMenu.clearAttributeValues();
+  }
+  
+  
+  public void clearEditableTileMenuAttributeValues()
+  {
+    oEditableTileMenu.clearAttributeValues();
+  }
+  
+  
+  public TileClickHandler getTileClickHandler()
+  {
+    return oTileClickHandler;
+  }
+  
+  
   public void setIsSolidReferences(Boolean pIsSolid)
   {
     oCurrentTile.setIsSolid(pIsSolid);
@@ -557,6 +621,18 @@ public class TileEditor extends Application
     oTileMenu.setIsSolid(pIsSolid.toString());
   }
  
+  
+  public void setTileStyle(Tile pTile, String pStyle)
+  {
+    pTile.setTileStyle(pStyle);
+  }
+  
+  
+  public Image getLoadedImage(String pImageName)
+  {
+    return oLoadedImagesMenu.getImage(pImageName);
+  }
+  
   
   public void setImageReferences(String pTileImageName, Image pImage)
   {
@@ -567,35 +643,4 @@ public class TileEditor extends Application
     oEditableTileMenu.setImageView(pImage);
   }
   
-  //Tile Handler class
-  private class TileClickHandler implements EventHandler<MouseEvent>
-  {
-    public void handle(MouseEvent pMouseEvent)
-    {
-      oCurrentTile = (Tile)pMouseEvent.getSource();
-
-      oTileMenu.clearAttributeValues();
-      oEditableTileMenu.clearAttributeValues();
-      
-      if(oPreviousTile != null)
-      {
-        oPreviousTile.setTileStyle(GRID_CELL);
-      }
-      
-      oCurrentTile.setTileStyle(SELECTED_GRID_CELL);
-      
-      displayCurrentTileConfig();
-      displayEditableTileConfig();
-      
-      oPreviousTile = oCurrentTile;
-      
-      pMouseEvent.consume();
-    }
-  }
-  
-  
 }
-  
-  
-
-
