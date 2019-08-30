@@ -224,16 +224,13 @@ public class LoadedImagesMenu extends BorderPane
       
       oCurrentSelectedRow.selectRow("-fx-background-color: #87ceeb");
       
-      if(pMouseEvent.getClickCount() == 2)
+      if(pMouseEvent.getClickCount() == 2 && oTileEditor.getCurrentTile() != null)
       {
         oTileEditor.setImageReferences(
             oCurrentSelectedRow.getImageName(), 
             oCurrentSelectedRow.getImage());
         
-        clearSelectedRow();
-        
         oTileEditor.closeLoadedImagesMenu();
-        
       }
     }
   }

@@ -37,8 +37,8 @@ public class TileEditor extends Application
   public  static final String SELECTED_GRID_CELL = "selected-grid-cell";
   public  static final String GRID_CELL          = "grid-cell";
   private static final String SIDE_PANE          = "side-border-pane";
-  private static final double SCENE_WIDTH        = 1000.0;
-  private static final double SCENE_HEIGHT       = 800.0;
+  private static final double SCENE_WIDTH        = 1200.0;
+  private static final double SCENE_HEIGHT       = 900.0;
   private static final double SIDE_PANE_WIDTH    = 200.0;
   public  static final int    TILE_PANE_LENGTH   = 37;
   public  static final int    TILE_IMAGE_LENGTH  = 35;
@@ -198,8 +198,15 @@ public class TileEditor extends Application
     vMenuItem = new MenuItem("Save");
     vMenuItems.add(vMenuItem);
     
-    vMenuItem = new MenuItem("Load");
+    vMenuItem = new MenuItem("Load Map");
     vMenuItem.setOnAction(new LoadMenuHandler(this));
+    vMenuItems.add(vMenuItem);
+    
+    vMenuItem = new MenuItem("Load Images");
+    vMenuItem.setOnAction(pEvent->
+    {
+      showLoadedImagesMenu();
+    });
     vMenuItems.add(vMenuItem);
     
     vMenuItem = new MenuItem("Quit");
@@ -241,9 +248,8 @@ public class TileEditor extends Application
     }
     
     enableAddRemoveTileButtons();
-    
-    oMapGridRows    = pTotalRows;
-    oMapGridColumns = pTotalColumns;
+    setMapGridRowCount(pTotalRows);
+    setMapGridColumnCount(pTotalColumns);
   }
   
   
@@ -360,6 +366,8 @@ public class TileEditor extends Application
       resetColumnAndRowCount();
       
       oAddRemoveTilesMenu.disableButtons();
+      clearTileMenuAttributeValues();
+      clearEditableTileMenuAttributeValues();
     }
   }
   
@@ -371,6 +379,8 @@ public class TileEditor extends Application
       resetColumnAndRowCount();
       
       oAddRemoveTilesMenu.disableButtons();
+      clearTileMenuAttributeValues();
+      clearEditableTileMenuAttributeValues();
     }
   }
   

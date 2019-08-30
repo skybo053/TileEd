@@ -79,8 +79,6 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
       vTileDataArray = (JSONArray)vMapObject.get("tiles");
       
       oTileEditor.clearMapGrid();
-      oTileEditor.setMapGridRowCount(vMapRows);
-      oTileEditor.setMapGridColumnCount(vMapCols);
       
       for(Iterator<JSONObject> vTileIterator = vTileDataArray.iterator(); vTileIterator.hasNext();)
       {
@@ -103,6 +101,7 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
            vImageName = vTileData.get("image").toString();
            vImage     = oTileEditor.getLoadedImage(vImageName);
            
+           vTile.setTileImageName(vImageName);
            vTile.setIsSolid(vIsSolid);
            vTile.setTileImage(vImage);
            vTile.setOnMouseClicked(vTileClickHandler);
@@ -128,15 +127,9 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
        }
      
      oTileEditor.enableAddRemoveTileButtons();
-
-    if(vTileEventsArray.size() > 0)
-    {
-      //vTileEvents = parseEventsArray(vTileEventsArray);
-    }
-    
-        
-      
-    }
+     oTileEditor.setMapGridRowCount(vCurrentRowIndex);
+     oTileEditor.setMapGridColumnCount(vMapCols);
+   }
     catch(NumberFormatException pNumberFormatException)
     {
     }
