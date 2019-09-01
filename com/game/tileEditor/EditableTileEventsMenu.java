@@ -209,7 +209,6 @@ public class EditableTileEventsMenu extends BorderPane
       ArrayList<TileEvent>    vTileEvents    = null;
       TileEvent               vTileEvent     = null;
       String                  vEventClass    = null;
-      String                  vEventName     = null;
       
       if(oTileEventArgsPane.getChildren().size() == 0)
       {
@@ -218,7 +217,6 @@ public class EditableTileEventsMenu extends BorderPane
     
       vTileEventArgs = new ArrayList<TileEventArg>();
       vEventClass    = oEventClassTextField.getText();
-      vEventName     = parseEventName(vEventClass);
       
       for(Node vNode : oTileEventArgsPane.getChildren())
       {
@@ -237,41 +235,16 @@ public class EditableTileEventsMenu extends BorderPane
       {
         oTileEvent.setTileEventArgs(vTileEventArgs);
         oTileEvent.setEventClassName(vEventClass);
-        oTileEvent.setEventName(vEventName);
       }
       else
       {
-        vTileEvent = new TileEvent(vEventClass, vEventName);
+        vTileEvent = new TileEvent(vEventClass);
         vTileEvent.setTileEventArgs(vTileEventArgs);
         oTileEditor.addTileEvent(vTileEvent);
       }
       
       clearMenu();
       oTileEditor.updateTileEventListViews();
-    }
-  }
-  
-  
-  private String parseEventName(String pEventClassName)
-  {
-    String vEventName = null;
-    
-    try
-    {
-      if(pEventClassName.contains(".") == false)
-      {
-        return pEventClassName;
-      }
-      else
-      {
-        vEventName = pEventClassName.substring(pEventClassName.lastIndexOf(".") + 1);
-        
-        return vEventName;
-      }
-    }
-    catch(StringIndexOutOfBoundsException pIndexOutOfBoundsException)
-    {
-      return pEventClassName;
     }
   }
   

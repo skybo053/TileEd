@@ -458,7 +458,7 @@ public class TileEditor extends Application
           "dirt");
       
       
-      vMoveEvent  = new TileEvent("com.game.TileEvents.events.MoveEvent", "MoveEvent");
+      vMoveEvent  = new TileEvent("com.game.TileEvents.events.MoveEvent");
       vMoveEvent.addTileEventArg("java.lang.Integer", "5");
       vMoveEvent.addTileEventArg("java.lang.Integer", "11");
  

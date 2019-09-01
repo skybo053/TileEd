@@ -1,11 +1,8 @@
 package com.game.eventHandlers;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -61,7 +58,7 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
     JSONObject     vCurrTileObject     = null;
     JSONObject     vCurrTileData       = null;
     JSONArray      vTileDataArray      = null;
-    JSONArray      vTileEventsArray    = null;
+    
     
     int vMapRows         = 0;
     int vMapCols         = 0;
@@ -87,10 +84,11 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
        
          for(int vColumnCount = 1; vColumnCount <= vMapCols; ++vColumnCount)
          {
-           Tile    vTile      = null;
-           Boolean vIsSolid   = null;
-           String  vImageName = null;
-           Image   vImage     = null;
+           Tile      vTile       = null;
+           Boolean   vIsSolid    = null;
+           String    vImageName  = null;
+           Image     vImage      = null;
+           JSONArray vTileEvents = null;
            
            
            JSONObject vTileObject = (JSONObject)vTileIterator.next();
@@ -100,11 +98,17 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
            vIsSolid   = Boolean.valueOf(vTileData.get("solid").toString());
            vImageName = vTileData.get("image").toString();
            vImage     = oTileEditor.getLoadedImage(vImageName);
+           vTileEvents = (JSONArray)vTileData.get("events");
            
            vTile.setTileImageName(vImageName);
            vTile.setIsSolid(vIsSolid);
            vTile.setTileImage(vImage);
            vTile.setOnMouseClicked(vTileClickHandler);
+           
+           if(vTileEvents.size() > 0)
+           {
+             vTile.setTileEvents(parseTileEvents(vTileEvents));
+           }
            
            vTileRow.add(vTile);
            
@@ -156,68 +160,48 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
   }
   
   
-  private static ArrayList<TileEvent> parseEventsArray(
-      JSONArray pEventsArray)
+  private ArrayList<TileEvent> parseTileEvents(JSONArray pEventsArray)
   {
-    ArrayList<TileEvent> vTileEvents = null;
+    ArrayList<TileEvent> vTileEvents  = null;
+    JSONObject           vEventObject = null;
+    JSONObject           vEventData   = null;
+    JSONArray            vEventArgs   = null;
     
-    Class<?>[]  vArgsClass      = null;
-    Object[]    vArgsObject     = null;
+    vTileEvents = new ArrayList<TileEvent>();
     
-    JSONObject  vCurrEventObject  = null;
-    JSONObject  vCurrEventData    = null;
-    JSONArray   vEventArgs        = null;
-    
-    String      vEventClassName   = null;
-    
-    try
+    for(Iterator<JSONObject> vEventsArrayObject = pEventsArray.iterator(); vEventsArrayObject.hasNext();)
     {
-      vTileEvents = new ArrayList<TileEvent>();
+      TileEvent vTileEvent      = null;
+      String    vEventClassName = null;
       
-      for(int vIndex = 0; vIndex < pEventsArray.size(); ++vIndex)
+      vEventObject = (JSONObject)vEventsArrayObject.next();
+      vEventData   = (JSONObject)vEventObject.get("event");
+      
+      vEventClassName = vEventData.get("name").toString();
+      vEventArgs      = (JSONArray)vEventData.get("args");
+      
+      vTileEvent      = new TileEvent(vEventClassName);
+      
+      for(Iterator<String> vArgsArrayObject = vEventArgs.iterator(); vArgsArrayObject.hasNext();)
       {
-        vCurrEventObject = (JSONObject)pEventsArray.get(vIndex);
-        vCurrEventData   = (JSONObject)vCurrEventObject.get("event");
-        vEventClassName  = vCurrEventData.get("name").toString();
-        vEventArgs       = (JSONArray)vCurrEventData.get("args");
+        String   vArgumentString   = null;
+        String[] vArgumentElements = null;
+        String   vArgumentClass    = null;
+        String   vArgumentValue    = null;
         
-        vArgsClass  = new Class<?>[vEventArgs.size()];
-        vArgsObject = new Object[vEventArgs.size()];
+        vArgumentString   = vArgsArrayObject.next();
+        vArgumentElements = vArgumentString.split("\\|");
         
-        for(int vArgsIndex = 0; vArgsIndex < vEventArgs.size(); ++vArgsIndex)
-        {
-          String[] vArgTokens = vEventArgs.get(vArgsIndex).toString().split("\\|");
-          
-          vArgsClass[vArgsIndex]  = Class.forName(vArgTokens[0]);
-          vArgsObject[vArgsIndex] = vArgsClass[vArgsIndex]
-                                    .getConstructor(new Class<?>[]{vArgTokens[1].getClass()})
-                                    .newInstance(vArgTokens[1]);
-        }
+        vArgumentClass = vArgumentElements[0];
+        vArgumentValue = vArgumentElements[1];
         
-        Class<?>       vEventClassObject = Class.forName(vEventClassName);
-        Constructor<?> vEventConstructor = vEventClassObject.getConstructor(vArgsClass);
-        
-        vTileEvents.add( (TileEvent)vEventConstructor.newInstance(vArgsObject) );
+        vTileEvent.addTileEventArg(vArgumentClass, vArgumentValue);
       }
-      return vTileEvents;
-    }
-    catch(IllegalAccessException pIllegalAccessException)
-    {
       
+      vTileEvents.add(vTileEvent);
     }
-    catch(NoSuchMethodException pNoSuchMethodException)
-    {
-    }
-    catch(ClassNotFoundException pClassNotFoundException)
-    {
-    }
-    catch(InvocationTargetException pInvocationTargetException)
-    {
-    }
-    catch(InstantiationException pInstantiationException)
-    {
-    }
-    return vEventArgs;
+    
+    return vTileEvents;
   }
 
 }

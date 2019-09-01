@@ -10,10 +10,10 @@ public class TileEvent
   private ArrayList<TileEventArg> oTileEventArgs  = null;
   
   
-  public TileEvent(String pEventClassName, String pEventName)
+  public TileEvent(String pEventClassName)
   {
     oEventClassName = pEventClassName;
-    oEventName      = pEventName;
+    oEventName      = parseEventName(pEventClassName);
     oTileEventArgs  = new ArrayList<TileEventArg>();
   }
   
@@ -21,6 +21,8 @@ public class TileEvent
   public void setEventClassName(String pEventClassName)
   {
     oEventClassName = pEventClassName;
+    
+    setEventName(parseEventName(pEventClassName));
   }
   
   
@@ -126,5 +128,29 @@ public class TileEvent
     }
     
     return vDisplayString.toString();
+  }
+  
+  
+  private String parseEventName(String pEventClassName)
+  {
+    int vIndex = -1;
+    
+    try
+    {
+      vIndex = pEventClassName.lastIndexOf(".");
+      
+      if(vIndex == -1)
+      {
+        return pEventClassName;
+      }
+      else
+      {
+        return pEventClassName.substring(vIndex + 1);
+      }
+    }
+    catch(StringIndexOutOfBoundsException pStringIndexOutOfBoundsException)
+    {
+      return pEventClassName;
+    }
   }
 }
