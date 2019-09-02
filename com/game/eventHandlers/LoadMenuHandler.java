@@ -83,6 +83,11 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
       vMapCols       = Integer.parseInt(vAttribValue.toString());
       vTileDataArray = (JSONArray)vMapObject.get("tiles");
       
+      if(vTileDataArray == null || vTileDataArray.size() == 0)
+      {
+        throw new NullPointerException("Map file does not contain any \"tiles\"");
+      }
+      
       vTileClickHandler = oTileEditor.getTileClickHandler();
       
       oTileEditor.clearMapGrid();
@@ -103,7 +108,13 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
            
            JSONObject vTileObject = (JSONObject)vTileIterator.next();
            JSONObject vTileData   = (JSONObject)vTileObject.get("tile");
-           vTile                  = new Tile();
+           
+           if(vTileData == null)
+           {
+             continue;
+           }
+           
+           vTile  = new Tile();
            
            vAttribValue = vTileData.get("solid");
            
