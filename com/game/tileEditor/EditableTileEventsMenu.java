@@ -228,6 +228,11 @@ public class EditableTileEventsMenu extends BorderPane
         vArgClassType = vArgumentHBox.getArgumentClassText();
         vArgValue     = vArgumentHBox.getArgumentValueText();
         
+        if(vArgClassType.isEmpty() && vArgValue.isEmpty())
+        {
+          continue;
+        }
+        
         vTileEventArgs.add(new TileEventArg(vArgClassType, vArgValue));
       }
       

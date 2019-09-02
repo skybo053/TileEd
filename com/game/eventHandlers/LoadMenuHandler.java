@@ -55,28 +55,38 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
     JSONParser     vParser             = null; 
     JSONObject     vMapObject          = null;
     JSONObject     vDimensions         = null;
-    JSONObject     vCurrTileObject     = null;
-    JSONObject     vCurrTileData       = null;
     JSONArray      vTileDataArray      = null;
+    Object         vAttribValue        = null;
     
-    
-    int vMapRows         = 0;
     int vMapCols         = 0;
     int vCurrentRowIndex = 0;
 
     try
     {
-      vParser           = new JSONParser();
-      vMapObject        = (JSONObject)vParser.parse(new FileReader(pMapFile));
-      vTileClickHandler = oTileEditor.getTileClickHandler();
+      vParser        = new JSONParser();
+      vMapObject     = (JSONObject)vParser.parse(new FileReader(pMapFile));
 
       vDimensions    = (JSONObject)vMapObject.get("map");
-      vMapRows       = Integer.parseInt(vDimensions.get("rows").toString());
-      vMapCols       = Integer.parseInt(vDimensions.get("cols").toString());
+      
+      if(vDimensions == null)
+      {
+        throw new NullPointerException("Map file missing required \"map\" object");
+      }
+      
+      vAttribValue = vDimensions.get("cols");
+      
+      if(vAttribValue == null)
+      {
+        throw new NullPointerException("Map object is missing required key/value \"cols\"");
+      }
+      
+      vMapCols       = Integer.parseInt(vAttribValue.toString());
       vTileDataArray = (JSONArray)vMapObject.get("tiles");
       
-      oTileEditor.clearMapGrid();
+      vTileClickHandler = oTileEditor.getTileClickHandler();
       
+      oTileEditor.clearMapGrid();
+     
       for(Iterator<JSONObject> vTileIterator = vTileDataArray.iterator(); vTileIterator.hasNext();)
       {
         ArrayList<Tile> vTileRow   = new ArrayList<Tile>();
@@ -84,28 +94,49 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
        
          for(int vColumnCount = 1; vColumnCount <= vMapCols; ++vColumnCount)
          {
-           Tile      vTile       = null;
-           Boolean   vIsSolid    = null;
-           String    vImageName  = null;
-           Image     vImage      = null;
-           JSONArray vTileEvents = null;
+           Tile      vTile        = null;
+           Boolean   vIsSolid     = null;
+           String    vImageName   = null;
+           Image     vImage       = null;
+           JSONArray vTileEvents  = null;
            
            
            JSONObject vTileObject = (JSONObject)vTileIterator.next();
            JSONObject vTileData   = (JSONObject)vTileObject.get("tile");
            vTile                  = new Tile();
            
-           vIsSolid   = Boolean.valueOf(vTileData.get("solid").toString());
-           vImageName = vTileData.get("image").toString();
+           vAttribValue = vTileData.get("solid");
+           
+           if(vAttribValue == null)
+           {
+             vIsSolid = false;
+           }
+           else
+           {
+             vIsSolid = Boolean.valueOf(vAttribValue.toString());
+           }
+           
+           vAttribValue = vTileData.get("image");
+           
+           if(vAttribValue == null)
+           {
+             vImageName = "NO_IMAGE_ATTRIBUTE";
+           }
+           else
+           {
+             vImageName = vAttribValue.toString();
+           }
+           
            vImage     = oTileEditor.getLoadedImage(vImageName);
+           
            vTileEvents = (JSONArray)vTileData.get("events");
            
            vTile.setTileImageName(vImageName);
-           vTile.setIsSolid(vIsSolid);
+           vTile.setIsSolid(Boolean.valueOf(vIsSolid));
            vTile.setTileImage(vImage);
            vTile.setOnMouseClicked(vTileClickHandler);
            
-           if(vTileEvents.size() > 0)
+           if(vTileEvents != null && vTileEvents.size() > 0)
            {
              vTile.setTileEvents(parseTileEvents(vTileEvents));
            }
@@ -136,6 +167,10 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
    }
     catch(NumberFormatException pNumberFormatException)
     {
+      SceneUtils.displayAlert(
+          Alert.AlertType.ERROR, 
+          "ERROR",
+          "Unable to parse value given for \"cols\" attribute into a valid number");
     }
     catch(ParseException pParseException)
     {
@@ -155,7 +190,8 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
       SceneUtils.displayAlert(
           Alert.AlertType.ERROR, 
           "ERROR",
-          "Unable to load map file.  Map is missing required attributes");
+          "Unable to load map file.  Map is missing required attributes: " +
+           pNullPointerException.getMessage());
     }
   }
   
@@ -173,29 +209,47 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
     {
       TileEvent vTileEvent      = null;
       String    vEventClassName = null;
+      Object    vEventAttrib    = null;
       
       vEventObject = (JSONObject)vEventsArrayObject.next();
       vEventData   = (JSONObject)vEventObject.get("event");
       
-      vEventClassName = vEventData.get("name").toString();
-      vEventArgs      = (JSONArray)vEventData.get("args");
-      
-      vTileEvent      = new TileEvent(vEventClassName);
-      
-      for(Iterator<String> vArgsArrayObject = vEventArgs.iterator(); vArgsArrayObject.hasNext();)
+      if(vEventData == null)
       {
-        String   vArgumentString   = null;
-        String[] vArgumentElements = null;
-        String   vArgumentClass    = null;
-        String   vArgumentValue    = null;
-        
-        vArgumentString   = vArgsArrayObject.next();
-        vArgumentElements = vArgumentString.split("\\|");
-        
-        vArgumentClass = vArgumentElements[0];
-        vArgumentValue = vArgumentElements[1];
-        
-        vTileEvent.addTileEventArg(vArgumentClass, vArgumentValue);
+        continue;
+      }
+      
+      vEventAttrib = vEventData.get("name");
+      
+      if(vEventAttrib == null)
+      {
+        vEventClassName = "NO_NAME_GIVEN";
+      }
+      else
+      {
+        vEventClassName = vEventAttrib.toString();
+      }
+      
+      vEventArgs  = (JSONArray)vEventData.get("args");
+      vTileEvent  = new TileEvent(vEventClassName);
+      
+      if(vEventArgs != null && vEventArgs.size() > 0)
+      {
+        for(Iterator<String> vArgsArrayObject = vEventArgs.iterator(); vArgsArrayObject.hasNext();)
+        {
+          String   vArgumentString   = null;
+          String[] vArgumentElements = null;
+          String   vArgumentClass    = null;
+          String   vArgumentValue    = null;
+          
+          vArgumentString   = vArgsArrayObject.next();
+          vArgumentElements = vArgumentString.split("\\|");
+          
+          vArgumentClass = vArgumentElements[0];
+          vArgumentValue = vArgumentElements[1];
+          
+          vTileEvent.addTileEventArg(vArgumentClass, vArgumentValue);
+        }
       }
       
       vTileEvents.add(vTileEvent);
