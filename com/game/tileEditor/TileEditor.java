@@ -198,7 +198,7 @@ public class TileEditor extends Application
     vMenuItem = new MenuItem("Save");
     vMenuItems.add(vMenuItem);
     
-    vMenuItem = new MenuItem("Load Map");
+    vMenuItem = new MenuItem("Load");
     vMenuItem.setOnAction(new LoadMenuHandler(this));
     vMenuItems.add(vMenuItem);
     
