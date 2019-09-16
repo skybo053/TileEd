@@ -1,18 +1,23 @@
 package com.game.tileEditor;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.game.eventHandlers.ExitHandler;
 import com.game.eventHandlers.LoadMenuHandler;
 import com.game.eventHandlers.NewProjectHandler;
+import com.game.eventHandlers.SaveHandler;
 import com.game.eventHandlers.TileClickHandler;
 import com.game.tileEditor.tileEvents.TileEvent;
 import com.game.utilities.SceneUtils;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -21,7 +26,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -196,6 +200,7 @@ public class TileEditor extends Application
     vMenuItems.add(vMenuItem);
     
     vMenuItem = new MenuItem("Save");
+    vMenuItem.setOnAction(new SaveHandler(this));
     vMenuItems.add(vMenuItem);
     
     vMenuItem = new MenuItem("Load");
@@ -651,6 +656,55 @@ public class TileEditor extends Application
 
     oTileMenu.setImage(pTileImageName);
     oEditableTileMenu.setImageView(pImage);
+  }
+  
+  
+  public void saveMap(File pFile)
+  {
+    PrintWriter          vFileWriter = null;
+    String               vIndent     = null;
+    ObservableList<Node> vTiles      = null;
+    
+    try
+    {
+      vFileWriter = new PrintWriter(new BufferedWriter(new FileWriter(pFile)));
+      vTiles      = oMainGridPane.getChildren();
+      vIndent     = "  ";
+      
+      vFileWriter.println("{");
+      vFileWriter.println(vIndent + "\"map\":");
+      vFileWriter.println(vIndent + "{");
+      vFileWriter.println(vIndent + vIndent + "\"rows\":" + oMapGridRows + ",");
+      vFileWriter.println(vIndent + vIndent + "\"cols\":"  + oMapGridColumns);
+      vFileWriter.println(vIndent + "},");
+      vFileWriter.println(vIndent + "\"tiles\":");
+      vFileWriter.println(vIndent + "[");
+      
+      if(vTiles.size() > 0)
+      {
+        vFileWriter.println(vIndent + vIndent + "{");
+        
+        for(Node vNode : vTiles)
+        {
+          Tile vTile = (Tile)vNode;
+        }
+      }
+      
+     
+      
+      
+    }
+    catch(IOException pIOException)
+    {
+      System.out.println("TileEditor.saveMap - " + pIOException.getMessage());
+    }
+    finally
+    {
+      if(vFileWriter != null)
+      {
+        vFileWriter.close();
+      }
+    }
   }
   
 }
