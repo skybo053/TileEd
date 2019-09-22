@@ -66,39 +66,39 @@ public class TileEvent
   }
   
   
-  public String toJSON()
+  public String toJson()
   {
-    StringBuilder          vEventJSON    = null;
-    TileEventArg           vTileEventArg = null;
-    Iterator<TileEventArg> vIterator     = null;
+    StringBuilder vStringBuilder = null;
+    String        vIndent        = null;
+    String        vNewLine       = null;
     
-    vEventJSON = new StringBuilder(255);
-    vIterator  = oTileEventArgs.iterator();
+    vStringBuilder = new StringBuilder(1024);
+    vIndent        = "  ";
+    vNewLine       = System.lineSeparator();
     
-    vEventJSON.append("{ \n");
-    vEventJSON.append("  \"event\" : \n");
-    vEventJSON.append("  { \n");
-    vEventJSON.append("    \"name\" : ");
-    vEventJSON.append("\"" + oEventClassName + "\" \n");
-    vEventJSON.append("    \"args\" : [");
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + vIndent + "{" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + vIndent + vIndent + "\"event\":" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + vIndent + vIndent + "{" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + vIndent + vIndent + vIndent + "\"name\":\"" + oEventClassName + "\"," + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + vIndent + vIndent + vIndent + "\"args\":[");
     
-    while(vIterator.hasNext())
+    for(Iterator<TileEventArg> vTileEventArgIterator = oTileEventArgs.iterator(); vTileEventArgIterator.hasNext();)
     {
-      vTileEventArg = vIterator.next();
+      TileEventArg vTileEventArg = vTileEventArgIterator.next();
       
-      vEventJSON.append(vTileEventArg.toJSON());
+      vStringBuilder.append(vTileEventArg.toJson());
       
-      if(vIterator.hasNext())
+      if(vTileEventArgIterator.hasNext())
       {
-        vEventJSON.append(", ");
+        vStringBuilder.append(",");
       }
     }
     
-    vEventJSON.append("] \n");
-    vEventJSON.append("  } \n");
-    vEventJSON.append("}");
+    vStringBuilder.append("]" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + vIndent + vIndent + "}" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + vIndent + "}");
     
-    return vEventJSON.toString();
+    return vStringBuilder.toString();
   }
   
   

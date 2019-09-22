@@ -114,7 +114,6 @@ public class TileEditor extends Application
     buildMenu();
     configureLoadedImagesMenuStage();
     configureMainBorderPane();
-    configureMainGridPane();
     configureSideFlowPane();
     configureTileAttribTitlePane();
     configureEditTileAttribsTitlePane();
@@ -231,30 +230,9 @@ public class TileEditor extends Application
   }
   
   
-  public void createMapGrid(int pTotalRows, int pTotalColumns)
+  public void addMapRow(int pRowIndex, ArrayList<Tile> pTiles)
   {
-    ArrayList<Node> vTiles      = null;
-    Tile            vTile       = null;
-    
-    for(int vCurrentRow = 0; vCurrentRow < pTotalRows; ++vCurrentRow)
-    {
-      vTiles = new ArrayList<Node>();
-      
-      for(int vCurrentColumn = 0; vCurrentColumn < pTotalColumns; ++vCurrentColumn)
-      {
-        vTile  = new Tile();
-        
-        vTile.setOnMouseClicked(oTileClickHandler);
-        
-        vTiles.add(vTile);
-      }
-      
-      oMainGridPane.addRow(vCurrentRow, vTiles.toArray(new Node[vTiles.size()]));
-    }
-    
-    enableAddRemoveTileButtons();
-    setMapGridRowCount(pTotalRows);
-    setMapGridColumnCount(pTotalColumns);
+    oMainGridPane.addRow(pRowIndex, pTiles.toArray(new Node[0]));
   }
   
   
@@ -276,24 +254,24 @@ public class TileEditor extends Application
   }
   
   
-  public void addLoadedMapRow(ArrayList<Tile> pTileRow, int pRowIndex)
-  {
-    oMainGridPane.addRow(pRowIndex, pTileRow.toArray(new Node[pTileRow.size()]));
-  }
-  
-  
   public void addTileRow()
   {
-    ArrayList<Tile> vTilesToAdd = null;
+    ArrayList<Tile> vRowToAdd = null;
     
-    vTilesToAdd = new ArrayList<Tile>();
+    vRowToAdd = new ArrayList<Tile>();
     
-    for(int vCount = 0; vCount < oMapGridColumns; ++vCount)
+    for(int vColumnIndex = 0; vColumnIndex < oMapGridColumns; ++vColumnIndex)
     {
-      vTilesToAdd.add(new Tile());
+      Tile vTile = new Tile();
+      
+      vTile.setRowIndex(oMapGridRows);
+      vTile.setColumnIndex(vColumnIndex);
+      vTile.setOnMouseClicked(oTileClickHandler);
+      
+      vRowToAdd.add(vTile);
     }
     
-    oMainGridPane.addRow(oMapGridRows, vTilesToAdd.toArray(new Node[vTilesToAdd.size()]));
+    addMapRow(oMapGridRows, vRowToAdd);
     
     incrementMapGridRowCount();
   }
@@ -301,16 +279,22 @@ public class TileEditor extends Application
   
   public void addTileColumn()
   {
-    ArrayList<Tile> vTilesToAdd = null;
+    ArrayList<Tile> vColumnToAdd = null;
     
-    vTilesToAdd = new ArrayList<Tile>();
+    vColumnToAdd = new ArrayList<Tile>();
     
-    for(int vCount = 0; vCount < oMapGridRows; ++vCount)
+    for(int vRowIndex = 0; vRowIndex < oMapGridRows; ++vRowIndex)
     {
-      vTilesToAdd.add(new Tile());
+      Tile vTile = new Tile();
+      
+      vTile.setRowIndex(vRowIndex);
+      vTile.setColumnIndex(oMapGridColumns);
+      vTile.setOnMouseClicked(oTileClickHandler);
+      
+      vColumnToAdd.add(vTile);
     }
     
-    oMainGridPane.addColumn(oMapGridColumns, vTilesToAdd.toArray(new Node[vTilesToAdd.size()]));
+    oMainGridPane.addColumn(oMapGridColumns, vColumnToAdd.toArray(new Node[0]));
     
     incrementMapGridColumnCount();
   }
@@ -432,62 +416,6 @@ public class TileEditor extends Application
   }
   
   
-  private void configureMainGridPane()
-  {
-    Tile                 vTile       = null;
-    ArrayList<Node>      vImages     = null;
-    TileEvent            vMoveEvent  = null;
-    
-    try
-    {
-      vImages = new ArrayList<Node>();
-      
-      vTile   = new Tile();
-      
-      vTile.setOnMouseClicked(oTileClickHandler);
-      
-      vImages.add(vTile);
-       
-      vTile = new Tile(
-          true,
-          "file:Resources/Images/water.png",
-          "water");
-      
-      vTile.setOnMouseClicked(oTileClickHandler);
-      
-      vImages.add(vTile);
-       
-      vTile = new Tile(
-          false,
-          "file:Resources/Images/dirt.png",
-          "dirt");
-      
-      
-      vMoveEvent  = new TileEvent("com.game.TileEvents.events.MoveEvent");
-      vMoveEvent.addTileEventArg("java.lang.Integer", "5");
-      vMoveEvent.addTileEventArg("java.lang.Integer", "11");
- 
-      vTile.addTileEvent(vMoveEvent);
-      
-      /*vMoveEvent  = new TileEvent("com.game.TileEvents.events.OTHEREvent", "OtherEvent");
-      vMoveEvent.addTileEventArg("java.lang.Integer", "100");
-      vMoveEvent.addTileEventArg("java.lang.Integer", "999");
-      
-      vTile.addTileEvent(vMoveEvent);*/
-      
-      vTile.setOnMouseClicked(oTileClickHandler);
-      
-      vImages.add(vTile);
-       
-      oMainGridPane.addRow(0, vImages.toArray(new Node[vImages.size()]));
-    }
-    catch(Exception e)
-    {
-     System.out.println(e.getMessage());
-    }
-  }
-  
-  
   public void removeTileEvent(TileEvent pTileEvent)
   {
     oCurrentTile.deleteTileEvent(pTileEvent);
@@ -534,17 +462,14 @@ public class TileEditor extends Application
   {
     Integer vRowIndex   = null;
     Integer vColIndex   = null;
-    Double vTileWidth   = null;
-    Double vTileHeight  = null;
-    
-    vRowIndex   = GridPane.getRowIndex(oCurrentTile);
-    vColIndex   = GridPane.getColumnIndex(oCurrentTile);
+    Double  vTileWidth  = null;
+    Double  vTileHeight = null;
     
     vTileWidth  = oCurrentTile.getTileWidth();
     vTileHeight = oCurrentTile.getTileHeight();
     
-    oTileMenu.setRow(vRowIndex.toString());
-    oTileMenu.setColumn(vColIndex.toString());
+    oTileMenu.setRow(oCurrentTile.getRowIndex().toString());
+    oTileMenu.setColumn(oCurrentTile.getColumnIndex().toString());
     oTileMenu.setWidth(vTileWidth.toString());
     oTileMenu.setHeight(vTileHeight.toString());
     oTileMenu.setImage(oCurrentTile.getTileImageName());
@@ -667,7 +592,7 @@ public class TileEditor extends Application
     
     try
     {
-      vFileWriter = new PrintWriter(new BufferedWriter(new FileWriter(pFile)));
+      vFileWriter = new PrintWriter(new BufferedWriter(new FileWriter(pFile)), true);
       vTiles      = oMainGridPane.getChildren();
       vIndent     = "  ";
       
@@ -680,19 +605,22 @@ public class TileEditor extends Application
       vFileWriter.println(vIndent + "\"tiles\":");
       vFileWriter.println(vIndent + "[");
       
-      if(vTiles.size() > 0)
+      for(Iterator<Node> vIterator = vTiles.iterator(); vIterator.hasNext();)
       {
-        vFileWriter.println(vIndent + vIndent + "{");
+        Tile vTile = null;
         
-        for(Node vNode : vTiles)
+        vTile = (Tile)vIterator.next();
+        
+        vFileWriter.print(vTile.toJson());
+        
+        if(vIterator.hasNext())
         {
-          Tile vTile = (Tile)vNode;
+          vFileWriter.println(",");
         }
       }
       
-     
-      
-      
+      vFileWriter.println("\n" + vIndent + "]");
+      vFileWriter.print("}");
     }
     catch(IOException pIOException)
     {

@@ -1,5 +1,8 @@
 package com.game.eventHandlers;
 
+import java.util.ArrayList;
+
+import com.game.tileEditor.Tile;
 import com.game.tileEditor.TileEditor;
 
 import javafx.event.ActionEvent;
@@ -102,21 +105,54 @@ public class NewProjectHandler implements EventHandler<ActionEvent>
   {
     public void handle(ActionEvent pActionEvent)
     {
-      Integer vRows    = null;
-      Integer vColumns = null;
+      Integer          vRows             = null;
+      Integer          vColumns          = null;
+      TileClickHandler vTileClickHandler = null;
       
       try
       {
         vRows    = Integer.parseInt(oRowTextField.getText().trim());
         vColumns = Integer.parseInt(oColumnTextField.getText().trim());
         
+        if(vRows < 1 && vColumns < 1)
+        {
+          throw new IllegalArgumentException("Cannot create map with row count " + vRows + " and column count " + vColumns);
+        }
+        
         oTileEditor.clearMapGrid();
-        oTileEditor.createMapGrid(vRows, vColumns);
+        
+        vTileClickHandler = oTileEditor.getTileClickHandler();
+        
+        for(int vRowIndex = 0; vRowIndex < vRows; ++vRowIndex)
+        {
+          ArrayList<Tile> vTiles = new ArrayList<Tile>();
+          
+          for(int vColIndex = 0; vColIndex < vColumns; ++vColIndex)
+          {
+            Tile vTile = new Tile();
+            
+            vTile.setRowIndex(vRowIndex);
+            vTile.setColumnIndex(vColIndex);
+            vTile.setOnMouseClicked(vTileClickHandler);
+               
+            vTiles.add(vTile);
+          }
+          
+          oTileEditor.addMapRow(vRowIndex, vTiles);
+        }
+        
+        oTileEditor.enableAddRemoveTileButtons();
+        oTileEditor.setMapGridRowCount(vRows);
+        oTileEditor.setMapGridColumnCount(vColumns);
         
         clearTextFields();
         oStage.close();
       }
       catch(NumberFormatException pNumberFormatException)
+      {
+        
+      }
+      catch(IllegalArgumentException pIllegalArgumentException)
       {
         
       }

@@ -95,7 +95,6 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
       for(Iterator<JSONObject> vTileIterator = vTileDataArray.iterator(); vTileIterator.hasNext();)
       {
         ArrayList<Tile> vTileRow   = new ArrayList<Tile>();
-        Integer         vRowIndex  = null;
        
          for(int vColumnCount = 1; vColumnCount <= vMapCols; ++vColumnCount)
          {
@@ -146,6 +145,8 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
            vTile.setIsSolid(Boolean.valueOf(vIsSolid));
            vTile.setTileImage(vImage);
            vTile.setOnMouseClicked(vTileClickHandler);
+           vTile.setRowIndex(vCurrentRowIndex);
+           vTile.setColumnIndex(vColumnCount - 1);
            
            if(vTileEvents != null && vTileEvents.size() > 0)
            {
@@ -159,6 +160,9 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
              while(vColumnCount < vMapCols)
              {
                vTile = new Tile();
+               
+               vTile.setRowIndex(vCurrentRowIndex);
+               vTile.setColumnIndex(vColumnCount);
                vTile.setOnMouseClicked(vTileClickHandler);
                
                vTileRow.add(vTile);
@@ -168,7 +172,7 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
            }
          }
          
-         oTileEditor.addLoadedMapRow(vTileRow, vCurrentRowIndex);
+         oTileEditor.addMapRow(vCurrentRowIndex, vTileRow);
          ++vCurrentRowIndex;
        }
      

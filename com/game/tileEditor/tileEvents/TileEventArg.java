@@ -25,16 +25,16 @@ public class TileEventArg
   }
   
   
-  public String toJSON()
+  public String toJson()
   {
-    StringBuilder vJSONString = null;
+    StringBuilder vStringBuilder = null;
     
-    vJSONString = new StringBuilder(255);
+    vStringBuilder = new StringBuilder(255);
     
-    vJSONString.append("\"" + oClassType);
-    vJSONString.append("|" + oValue + "\"");
+    vStringBuilder.append("\"" + oClassType);
+    vStringBuilder.append("|" + oValue + "\"");
     
-    return vJSONString.toString();
+    return vStringBuilder.toString();
   }
 
 }

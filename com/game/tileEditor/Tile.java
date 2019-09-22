@@ -1,12 +1,14 @@
 package com.game.tileEditor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.game.tileEditor.tileEvents.TileEvent;
 import com.game.utilities.SceneUtils;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
 public class Tile extends StackPane
@@ -17,12 +19,16 @@ public class Tile extends StackPane
   private ImageView            oImageView     = null;
   private Boolean              oIsSolid       = false;
   private ArrayList<TileEvent> oTileEvents    = null;
+  private Integer              oRowIndex      = null;
+  private Integer              oColumnIndex   = null;
  
   
   public Tile()
   {
     oImageView     = new ImageView();
     oTileEvents    = new ArrayList<TileEvent>();
+    oRowIndex      = 0;
+    oColumnIndex   = 0;
     
     setPrefWidth(TileEditor.TILE_PANE_LENGTH);
     setPrefHeight(TileEditor.TILE_PANE_LENGTH);
@@ -179,6 +185,73 @@ public class Tile extends StackPane
   {
     getStyleClass().clear();
     getStyleClass().add(pStyle);
+  }
+  
+  
+  public Integer getRowIndex()
+  {
+    return oRowIndex;
+  }
+  
+  
+  public void setRowIndex(Integer pRowIndex)
+  {
+    oRowIndex = pRowIndex;
+  }
+  
+  
+  public Integer getColumnIndex()
+  {
+    return oColumnIndex;
+  }
+  
+  
+  public void setColumnIndex(Integer pColumnIndex)
+  {
+    oColumnIndex = pColumnIndex;
+  }
+  
+  
+  public String toJson()
+  {
+    StringBuilder vStringBuilder = null;
+    String        vIndent        = null;
+    String        vNewLine       = null;
+    
+    vStringBuilder = new StringBuilder(1024);
+    vIndent        = "  ";
+    vNewLine       = System.lineSeparator();
+    
+    vStringBuilder.append(vIndent + vIndent + "{" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + "\"tile\":" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + "{" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + "\"row\":"          + oRowIndex      + ","   + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + "\"col\":"          + oColumnIndex   + ","   + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + "\"image-name\":\"" + oTileImageName + "\"," + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + "\"solid\":"        + oIsSolid       + ","   + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + "\"events\":" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + vIndent + "[");
+    vStringBuilder.append(oTileEvents.size() > 0 ? vNewLine : "");
+    
+    for(Iterator<TileEvent> vEventIterator = oTileEvents.iterator(); vEventIterator.hasNext();)
+    {
+      TileEvent vTileEvent = null;
+      
+      vTileEvent = vEventIterator.next();
+      
+      vStringBuilder.append(vTileEvent.toJson());
+      
+      if(vEventIterator.hasNext())
+      {
+        vStringBuilder.append("," + vNewLine);
+      }
+    }
+    
+    vStringBuilder.append(vNewLine + vIndent + vIndent + vIndent + vIndent + "]" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + vIndent + "}" + vNewLine);
+    vStringBuilder.append(vIndent + vIndent + "}");
+    
+    return vStringBuilder.toString();
   }
   
 }
