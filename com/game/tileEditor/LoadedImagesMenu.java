@@ -249,12 +249,11 @@ public class LoadedImagesMenu extends BorderPane
       {
         LoadedImagesMenu.RowPanes vRowPanes         = null;
         StackPane                 vNamePane         = null;
-        StackPane                 vImagePane        = null;
         ObservableList<Node>      vNameImageList    = null;
+        Node                      vCurrentNode      = null;
         
         vRowPanes         = oRowPanesMap.get(oCurrentSelectedRowIndex);
         vNamePane         = vRowPanes.getNamePane();
-        vImagePane        = vRowPanes.getImagePane();
         
         vNameImageList    = oNameImageGridPane.getChildren();
         
@@ -263,10 +262,12 @@ public class LoadedImagesMenu extends BorderPane
         
         for(Iterator<Node> vIterator = vNameImageList.iterator(); vIterator.hasNext();)
         {
-          Node vCurrentNode = vIterator.next();
+          vCurrentNode = vIterator.next();
           
-          if(vCurrentNode == vNamePane || vCurrentNode == vImagePane)
+          if(vCurrentNode == vNamePane)
           {
+            vIterator.remove();
+            vIterator.next();
             vIterator.remove();
           }
         }
