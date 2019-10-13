@@ -1,14 +1,18 @@
 package com.game.tileEditor;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.game.eventHandlers.LoadImagesHandler;
 import com.game.utilities.SceneUtils;
 
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -33,9 +37,10 @@ public class LoadedImagesMenu extends BorderPane
   private HashMap<String, Image>                      oNameImageMap      = null;
   private HashMap<Integer, LoadedImagesMenu.RowPanes> oRowPanesMap       = null;
   
-  private int      oRowCount            = 0;
-  private RowPanes oPreviousSelectedRow = null;
-  private RowPanes oCurrentSelectedRow  = null;
+  private int      oRowCount                = 0;
+  private RowPanes oPreviousSelectedRow     = null;
+  private RowPanes oCurrentSelectedRow      = null;
+  private Integer  oCurrentSelectedRowIndex = null;
   
   private TileEditor oTileEditor = null;
   
@@ -196,6 +201,7 @@ public class LoadedImagesMenu extends BorderPane
     
     vDeleteButton.setPrefHeight(BUTTON_HEIGHT);
     vDeleteButton.setPrefWidth(BUTTON_WIDTH);
+    vDeleteButton.setOnAction(new DeleteImagesHandler());
     
     vGridPane.add(vAddButton, 0, 0);
     vGridPane.add(vDeleteButton, 1, 0);
@@ -209,13 +215,12 @@ public class LoadedImagesMenu extends BorderPane
     public void handle(MouseEvent pMouseEvent)
     {
       StackPane vClickedStackPane = null;
-      int       vClickedRowIndex  = -1;
       
-      vClickedStackPane = (StackPane)pMouseEvent.getSource();
-      vClickedRowIndex  = GridPane.getRowIndex(vClickedStackPane);
+      vClickedStackPane        = (StackPane)pMouseEvent.getSource();
+      oCurrentSelectedRowIndex = GridPane.getRowIndex(vClickedStackPane);
       
       oPreviousSelectedRow = oCurrentSelectedRow;
-      oCurrentSelectedRow  = oRowPanesMap.get(vClickedRowIndex);
+      oCurrentSelectedRow  = oRowPanesMap.get(oCurrentSelectedRowIndex);
       
       if(oPreviousSelectedRow != null)
       {
@@ -231,6 +236,40 @@ public class LoadedImagesMenu extends BorderPane
             oCurrentSelectedRow.getImage());
         
         oTileEditor.closeLoadedImagesMenu();
+      }
+    }
+  }
+  
+  
+  private class DeleteImagesHandler implements EventHandler<ActionEvent>
+  {
+    public void handle(ActionEvent pActionEvent)
+    {
+      if(oCurrentSelectedRow != null)
+      {
+        LoadedImagesMenu.RowPanes vRowPanes         = null;
+        StackPane                 vNamePane         = null;
+        StackPane                 vImagePane        = null;
+        ObservableList<Node>      vNameImageList    = null;
+        
+        vRowPanes         = oRowPanesMap.get(oCurrentSelectedRowIndex);
+        vNamePane         = vRowPanes.getNamePane();
+        vImagePane        = vRowPanes.getImagePane();
+        
+        vNameImageList    = oNameImageGridPane.getChildren();
+        
+        oRowPanesMap.remove(oCurrentSelectedRowIndex);
+        oNameImageMap.remove(vRowPanes.getImageName());
+        
+        for(Iterator<Node> vIterator = vNameImageList.iterator(); vIterator.hasNext();)
+        {
+          Node vCurrentNode = vIterator.next();
+          
+          if(vCurrentNode == vNamePane || vCurrentNode == vImagePane)
+          {
+            vIterator.remove();
+          }
+        }
       }
     }
   }
@@ -316,8 +355,6 @@ public class LoadedImagesMenu extends BorderPane
       
       return vNameLabel.getText();
     }
-    
-    
   }
   
 }

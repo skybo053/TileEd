@@ -242,11 +242,11 @@ public class LoadImagesHandler implements EventHandler<MouseEvent>
   
   private class LoadButtonClick implements EventHandler<MouseEvent>
   {
-    String vImageNameLabelText     = null;
-    String vImageNameTextFieldText = null;
-    
     public void handle(MouseEvent pMouseEvent)
     {
+      String vImageNameLabelText     = null;
+      String vImageNameTextFieldText = null;
+      
       vImageNameLabelText     = oEnteredImageNameLabel.getText().trim();
       vImageNameTextFieldText = oImageNameTextField.getText().trim();
       
