@@ -269,6 +269,8 @@ public class LoadedImagesMenu extends BorderPane
             vIterator.remove();
             vIterator.next();
             vIterator.remove();
+            
+            break;
           }
         }
       }
