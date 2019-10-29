@@ -126,7 +126,7 @@ public class LoadMenuHandler implements EventHandler<ActionEvent>
              vIsSolid = Boolean.valueOf(vAttribValue.toString());
            }
            
-           vAttribValue = vTileData.get("image");
+           vAttribValue = vTileData.get("image-name");
            
            if(vAttribValue == null)
            {
