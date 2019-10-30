@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import com.game.eventHandlers.ExitHandler;
 import com.game.eventHandlers.LoadMenuHandler;
@@ -71,6 +72,8 @@ public class TileEditor extends Application
   private int oMapGridRows    = 0;
   private int oMapGridColumns = 0;
   
+  private LinkedList<Tile> oTileLinkedList = null;
+  
   
   public static void main(String[] pArgs) 
   {
@@ -110,6 +113,7 @@ public class TileEditor extends Application
     oEditTileAttribsTitledPane = new TitledPane();
     oAddRemoveTilesTitledPane  = new TitledPane();
     oTileClickHandler          = new TileClickHandler(this);
+    oTileLinkedList            = new LinkedList<Tile>();
     
     buildMenu();
     configureLoadedImagesMenuStage();
@@ -233,6 +237,8 @@ public class TileEditor extends Application
   public void addMapRow(int pRowIndex, ArrayList<Tile> pTiles)
   {
     oMainGridPane.addRow(pRowIndex, pTiles.toArray(new Node[0]));
+    
+    oTileLinkedList.addAll(pTiles);
   }
   
   
@@ -279,9 +285,11 @@ public class TileEditor extends Application
   
   public void addTileColumn()
   {
-    ArrayList<Tile> vColumnToAdd = null;
+    ArrayList<Tile> vColumnToAdd            = null;
+    int             vTileLinkedListAddIndex = 0;
     
-    vColumnToAdd = new ArrayList<Tile>();
+    vColumnToAdd            = new ArrayList<Tile>();
+    vTileLinkedListAddIndex = oMapGridColumns;
     
     for(int vRowIndex = 0; vRowIndex < oMapGridRows; ++vRowIndex)
     {
@@ -292,6 +300,10 @@ public class TileEditor extends Application
       vTile.setOnMouseClicked(oTileClickHandler);
       
       vColumnToAdd.add(vTile);
+      
+      oTileLinkedList.add(vTileLinkedListAddIndex, vTile);
+      
+      vTileLinkedListAddIndex += (oMapGridColumns + 1);
     }
     
     oMainGridPane.addColumn(oMapGridColumns, vColumnToAdd.toArray(new Node[0]));
@@ -586,14 +598,14 @@ public class TileEditor extends Application
   
   public void saveMap(File pFile)
   {
-    PrintWriter          vFileWriter = null;
-    String               vIndent     = null;
-    ObservableList<Node> vTiles      = null;
+    Iterator<Tile> vIterator   = null;    
+    PrintWriter    vFileWriter = null;
+    String         vIndent     = null;
     
     try
     {
       vFileWriter = new PrintWriter(new BufferedWriter(new FileWriter(pFile)), true);
-      vTiles      = oMainGridPane.getChildren();
+      vIterator   = oTileLinkedList.iterator();
       vIndent     = "  ";
       
       vFileWriter.println("{");
@@ -605,7 +617,7 @@ public class TileEditor extends Application
       vFileWriter.println(vIndent + "\"tiles\":");
       vFileWriter.println(vIndent + "[");
       
-      for(Iterator<Node> vIterator = vTiles.iterator(); vIterator.hasNext();)
+      while(vIterator.hasNext())
       {
         Tile vTile = null;
         
