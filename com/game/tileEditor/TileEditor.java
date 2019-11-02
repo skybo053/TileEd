@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 
 import com.game.eventHandlers.ExitHandler;
 import com.game.eventHandlers.LoadMenuHandler;
@@ -72,7 +74,7 @@ public class TileEditor extends Application
   private int oMapGridRows    = 0;
   private int oMapGridColumns = 0;
   
-  private LinkedList<Tile> oTileLinkedList = null;
+  private TreeSet<Tile> oTileTreeSet = null;
   
   
   public static void main(String[] pArgs) 
@@ -113,7 +115,7 @@ public class TileEditor extends Application
     oEditTileAttribsTitledPane = new TitledPane();
     oAddRemoveTilesTitledPane  = new TitledPane();
     oTileClickHandler          = new TileClickHandler(this);
-    oTileLinkedList            = new LinkedList<Tile>();
+    oTileTreeSet               = new TreeSet<Tile>();
     
     buildMenu();
     configureLoadedImagesMenuStage();
@@ -238,7 +240,7 @@ public class TileEditor extends Application
   {
     oMainGridPane.addRow(pRowIndex, pTiles.toArray(new Node[0]));
     
-    oTileLinkedList.addAll(pTiles);
+    oTileTreeSet.addAll(pTiles);
   }
   
   
@@ -275,6 +277,7 @@ public class TileEditor extends Application
       vTile.setOnMouseClicked(oTileClickHandler);
       
       vRowToAdd.add(vTile);
+      oTileTreeSet.add(vTile);
     }
     
     addMapRow(oMapGridRows, vRowToAdd);
@@ -285,11 +288,9 @@ public class TileEditor extends Application
   
   public void addTileColumn()
   {
-    ArrayList<Tile> vColumnToAdd            = null;
-    int             vTileLinkedListAddIndex = 0;
+    ArrayList<Tile> vColumnToAdd = null;
     
-    vColumnToAdd            = new ArrayList<Tile>();
-    vTileLinkedListAddIndex = oMapGridColumns;
+    vColumnToAdd = new ArrayList<Tile>();
     
     for(int vRowIndex = 0; vRowIndex < oMapGridRows; ++vRowIndex)
     {
@@ -300,10 +301,7 @@ public class TileEditor extends Application
       vTile.setOnMouseClicked(oTileClickHandler);
       
       vColumnToAdd.add(vTile);
-      
-      oTileLinkedList.add(vTileLinkedListAddIndex, vTile);
-      
-      vTileLinkedListAddIndex += (oMapGridColumns + 1);
+      oTileTreeSet.add(vTile);
     }
     
     oMainGridPane.addColumn(oMapGridColumns, vColumnToAdd.toArray(new Node[0]));
@@ -314,15 +312,21 @@ public class TileEditor extends Application
   
   public void deleteTileRow()
   {
-    Node vNode = null;
+    Node           vNode     = null;
+    Iterator<Node> vIterator = null;
+    Integer        vRowIndex = null;
     
-    for(Iterator<Node> vIterator = oMainGridPane.getChildren().iterator(); vIterator.hasNext();)
+    vIterator = oMainGridPane.getChildren().iterator();
+    vRowIndex = oMapGridRows - 1;
+    
+    while(vIterator.hasNext())
     {
       vNode = vIterator.next();
       
-      if(GridPane.getRowIndex(vNode) == (oMapGridRows - 1))
+      if(GridPane.getRowIndex(vNode) == vRowIndex)
       {
         vIterator.remove();
+        oTileTreeSet.remove(vNode);
       }
     }
     
@@ -332,15 +336,21 @@ public class TileEditor extends Application
   
   public void deleteTileColumn()
   {
-    Node vNode = null;
+    Node           vNode     = null;
+    Iterator<Node> vIterator = null;
+    Integer        vColIndex = null;
     
-    for(Iterator<Node> vIterator = oMainGridPane.getChildren().iterator(); vIterator.hasNext();)
+    vIterator = oMainGridPane.getChildren().iterator();
+    vColIndex = oMapGridColumns - 1;
+    
+    while(vIterator.hasNext())
     {
       vNode = vIterator.next();
       
-      if(GridPane.getColumnIndex(vNode) == (oMapGridColumns - 1))
+      if(GridPane.getColumnIndex(vNode) == vColIndex)
       {
         vIterator.remove();
+        oTileTreeSet.remove(vNode);
       }
     }
     
@@ -472,8 +482,6 @@ public class TileEditor extends Application
   
   public void displayCurrentTileConfig()
   {
-    Integer vRowIndex   = null;
-    Integer vColIndex   = null;
     Double  vTileWidth  = null;
     Double  vTileHeight = null;
     
@@ -605,7 +613,7 @@ public class TileEditor extends Application
     try
     {
       vFileWriter = new PrintWriter(new BufferedWriter(new FileWriter(pFile)), true);
-      vIterator   = oTileLinkedList.iterator();
+      vIterator   = oTileTreeSet.iterator();
       vIndent     = "  ";
       
       vFileWriter.println("{");

@@ -8,10 +8,10 @@ import com.game.utilities.SceneUtils;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
-public class Tile extends StackPane
+
+public class Tile extends StackPane implements Comparable<Tile>
 {
   private static final String STYLE_CLASS     = "grid-cell";
   
@@ -252,6 +252,34 @@ public class Tile extends StackPane
     vStringBuilder.append(vIndent + vIndent + "}");
     
     return vStringBuilder.toString();
+  }
+  
+  
+  public int compareTo(Tile pTile)
+  {
+    if(oRowIndex == pTile.oRowIndex)
+    {
+      if(oColumnIndex < pTile.oColumnIndex)
+      {
+        return -1;
+      }
+      else if(this == pTile)
+      {
+        return 0;
+      }
+      else
+      {
+        return 1;
+      }
+    }
+    else if(oRowIndex < pTile.oRowIndex)
+    {
+      return -1;
+    }
+    else
+    {
+      return 1;
+    }
   }
   
 }
