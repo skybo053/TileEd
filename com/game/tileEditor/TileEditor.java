@@ -231,6 +231,8 @@ public class TileEditor extends Application
   {
     SceneUtils.clearPane(oMainGridPane);
     
+    oTileTreeSet.clear();
+    
     oMapGridRows    = 0;
     oMapGridColumns = 0;
   }
