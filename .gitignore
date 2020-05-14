@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 .settings/
 bin/*
 .classpath
-=======
-.settings/
 bin/*
-.classpath
->>>>>>> refs/heads/feat/make-tile-image-editable
 .project
-/bin/
