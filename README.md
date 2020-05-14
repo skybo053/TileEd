@@ -1,6 +1,7 @@
 # Usage
 
-This Tile Editor application can read in, and write out, JSON files for use by 2D games:  Map file is of the form:
+This Tile Editor application can read in, and write out, JSON files for use by 2D games:  This file should be of the form:
+
 
 ```javascript
 {
