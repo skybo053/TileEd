@@ -1,6 +1,6 @@
 # Usage
 
-This Tile Editor application can read in, and write out, JSON files for use by 2D games:  This file should be of the form:
+This Tile Editor application can read in, and write out, JSON files for use by 2D games:  This file is of the form:
 
 
 ```javascript
@@ -19,7 +19,7 @@ This Tile Editor application can read in, and write out, JSON files for use by 2
         "col": <Which column this tile is in>,
         "image-name": <Name of your image>,
         "solid": <true or false>,
-        "events": <An array of any events associated with this tile, 
+        "events": <An array of fully qualified class names for any tile events associated with this tile, 
                    i.e. moves character position, random encounter, hidden item, etc.>
       }
     }, 
