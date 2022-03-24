@@ -3,7 +3,7 @@
 This Tile Editor application can read in, and write out, JSON files for use by 2D games:  This file is of the form:
 
 
-```javascript
+```
 {
   "map":
   {
@@ -23,6 +23,8 @@ This Tile Editor application can read in, and write out, JSON files for use by 2
                    i.e. moves character position, random encounter, hidden item, etc.>
       }
     }, 
-    ...more tile objects
+    // more tile objects
     
-  
+```
+# Screenshots
+## Using editor to add tiles
