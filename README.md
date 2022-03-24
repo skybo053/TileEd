@@ -27,5 +27,9 @@ This Tile Editor application can read in, and write out, JSON files for use by 2
     
 ```
 # Screenshots
+
 ## Using editor to add tiles
 ![TileEdPic](https://user-images.githubusercontent.com/17620393/159839057-cf4e5c8f-d8d2-4569-9f8f-3bb45cf2a78f.png)
+
+## Loading images into image menu
+![TileEdWithImageMenuPic](https://user-images.githubusercontent.com/17620393/159839819-506378a6-c879-42ac-92ea-e072b73e64d9.png)
